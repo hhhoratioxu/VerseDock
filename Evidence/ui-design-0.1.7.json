@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-15",
+  "appVersion": "0.1.7 (8)",
+  "changes": {
+    "originalNativeLayout": true,
+    "thirdPartyUIPackages": false,
+    "wideLayout": "album artwork and metadata on left, lyrics on right",
+    "wideLayoutThreshold": {
+      "width": 760,
+      "height": 540
+    },
+    "newMacWindowDefault": {
+      "width": 900,
+      "height": 660
+    },
+    "compactLayoutRetained": true,
+    "consolidatedGlassToolbar": true,
+    "moreMenuActions": [
+      "refresh lyrics",
+      "import LRC"
+    ],
+    "settingsCategories": [
+      "appearance",
+      "lyrics",
+      "translation",
+      "connection"
+    ],
+    "lyricHoverTimestamp": true,
+    "smallerTranslationTypography": true,
+    "recenterAfterTranslationAndResizeImplemented": true,
+    "contextualSettingsRoutingImplemented": true
+  },
+  "initialMacUIRuntime": {
+    "actualInstalledBuildLaunched": true,
+    "compactWindowVisuallyInspected": {
+      "width": 480,
+      "height": 740
+    },
+    "wideWindowVisuallyInspected": {
+      "width": 900,
+      "height": 660
+    },
+    "nativeFileNewWindowUsed": true,
+    "settingsAppearancePageVisuallyInspected": true,
+    "actualSpotifyAlbumArtworkObserved": true,
+    "albumColoredBackgroundObserved": true,
+    "actualSpotifyOriginalLyricsObserved": true,
+    "providerAttribution": "Musixmatch",
+    "systemEnglishTranslationsObserved": true,
+    "realSpotifyPlaybackChangedByAgent": false
+  },
+  "finalCandidateRuntime": {
+    "sourceBuilt": true,
+    "lastChanges": "translation/resize recentering, rounded preview without decorative star, contextual settings entry",
+    "manualFinalCheckCompleted": false,
+    "blockedBy": "Mac locked; native UI tool requests manual unlock",
+    "pendingChecks": [
+      "final preview appearance",
+      "all settings category navigation",
+      "more menu and original-demo click navigation",
+      "restart into final candidate"
+    ],
+    "finalCandidateInstalledAndRunning": false
+  },
+  "builds": {
+    "macOSarm64": "optimized build and strict candidate signature passed",
+    "iOSAppAndWidget": "Release device build passed, unsigned"
+  },
+  "preservedPreferencesObservedBeforeUpdate": {
+    "glassStrength": 0.4,
+    "backgroundStrength": 0.65,
+    "albumBackgroundEnabled": true,
+    "albumFlowEnabled": true,
+    "interfaceMotionEnabled": true,
+    "translationEnabled": true,
+    "translationTarget": "English",
+    "menuCharacters": 18,
+    "menuScrolling": false,
+    "overlayFont": 28
+  },
+  "validationLimits": {
+    "iOSPhysicalDeviceUI": false,
+    "APNsDelivery": false,
+    "olderOSFallbackRuntime": false,
+    "coreAndBridgeTests": "prior executed evidence retained; lyrics policy unchanged"
+  },
+  "privacy": "No commercial lyric bodies, album image files, credentials, cookies, account profiles or signing materials included."
+}

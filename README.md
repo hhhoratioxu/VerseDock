@@ -10,7 +10,7 @@
 
 GitHub 仓库：[hhhoratioxu/VerseDock](https://github.com/hhhoratioxu/VerseDock)。打包的 Mac App 在 [Releases](https://github.com/hhhoratioxu/VerseDock/releases) 中提供；源码、Xcode 工程和安装说明直接保存在仓库内。
 
-当前版本为 [v0.1.6-ambient-glass](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.6-ambient-glass)：随封面配色的柔和流动背景、可调 Liquid Glass 强度与独立背景浓度，设置实时预览并自动保存。保留已在本机验证的 Spotify 原词优先、无词备用、点击跳转、Dock 与状态栏入口。原创图标见 [Artwork](Artwork/README.md)。
+当前版本为 [v0.1.7-design](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.7-design)：封面与歌词的自适应双栏布局、精简玻璃工具条、分区设置；保留随封面变化的流动背景和可调玻璃强度。保留已在本机验证的 Spotify 原词优先、无词备用、点击跳转、Dock 与状态栏入口。原创图标见 [Artwork](Artwork/README.md)。
 
 下载 `VerseDock-macOS-arm64.zip` 并解压，将 `VerseDock.app` 放进“应用程序”后双击。运行时显示 Dock 图标，点击 Dock 可重新打开歌词主窗口；关闭主窗口后状态栏歌词仍然继续。本地自行构建的产物位于 `build/VerseDock.app`，也可以在项目目录执行：
 
@@ -45,7 +45,9 @@ Mac 本地读取无需 Spotify Client ID。当前包为 arm64、最低 macOS 14�
 
 ## Liquid Glass 与界面动效
 
-macOS 26 / iOS、iPadOS 26 及以上使用系统原生 Liquid Glass：工具栏、来源与校准控件、跟随按钮和 Mac 悬浮窗采用玻璃材质，相关控件按区域组合。歌词正文保持清晰的实色文字。旧系统使用磨砂材质回退，最低运行版本仍为 macOS 14 / iOS 17。原生材质依照 [Apple Liquid Glass 文档](https://developer.apple.com/documentation/SwiftUI/Applying-Liquid-Glass-to-custom-views) 接入，应用布局与交互代码独立编写。
+大窗口使用左侧专辑封面与歌曲信息、右侧歌词的双栏布局；小窗口自动使用紧凑排版。Mac 新窗口默认 900 × 660，可自由调整大小。当前行保持突出，译文字号更轻，悬停可见时间提示；翻译批次出现后和窗口尺寸变化时会按跟随开关重新对齐当前行。顶部「更多操作」保留重新查找与导入 LRC，底部集中来源、校准与悬浮窗入口。设置分为「外观、歌词、翻译、连接」四页，原有偏好保留。
+
+macOS 26 / iOS、iPadOS 26 及以上使用系统原生 Liquid Glass：顶部工具组、底部来源与校准控制条和 Mac 悬浮窗采用玻璃材质；跟随按钮使用更轻的交互反馈。歌词正文保持清晰的实色文字。旧系统使用磨砂材质回退，最低运行版本仍为 macOS 14 / iOS 17。原生材质依照 [Apple Liquid Glass 文档](https://developer.apple.com/documentation/SwiftUI/Applying-Liquid-Glass-to-custom-views) 接入，应用布局与交互代码独立编写。
 
 当前句柔和提亮、轻微缩放并跟随滚动，边缘歌词渐隐；封面切换、悬停和按钮按压有轻量反馈，悬浮窗淡入淡出并在切句时过渡。播放指示只表示播放状态，不声称分析实际音频。来源与翻译详情、每首歌的时间校准可以从底部打开，设置中的接入说明折叠显示。
 
@@ -61,7 +63,7 @@ macOS 26 / iOS、iPadOS 26 及以上使用系统原生 Liquid Glass：工具栏�
 
 点击主窗口中有时间戳的歌词行，即可跳到对应演唱位置，已考虑该首歌的校准偏移。Mac 使用本地 Spotify 自动化；iOS 使用官方播放控制权限，需要重新授权旧连接，且 Spotify 对该 API 要求 Premium。纯文本歌词没有可靠时间点，不提供虚假跳转。
 
-歌词翻译默认关闭，在「设置 → 歌词翻译」自行开启并选择目标语言。原词在上，机器译文在下；主窗口、可拖动悬浮窗、Mac 状态栏与实时活动均提供对应布局。状态栏高度有限，译文字号较小；收起的灵动岛只显示原词片段，展开或锁屏显示双语。翻译不改变原歌词的时间戳。
+歌词翻译默认关闭，在「设置 → 翻译」自行开启并选择目标语言。原词在上，机器译文在下；主窗口、可拖动悬浮窗、Mac 状态栏与实时活动均提供对应布局。状态栏高度有限，译文字号较小；收起的灵动岛只显示原词片段，展开或锁屏显示双语。翻译不改变原歌词的时间戳。
 
 使用 Apple 系统翻译，不需要翻译服务密钥；需要 macOS 15 或 iOS/iPadOS 18 及以上。语言列表实时取自本机系统，本次 Mac 返回 21 个语言/地区选项，包括中、英、日、韩、法、德、西、葡、俄、阿拉伯、印地语等。不是每个语言组合都可互译；首次需按系统提示下载语言包，未支持或失败会明确显示，仍保留原词。识别不准确时可指定原词语言。首次开启和下载语言包时请打开歌词主窗口；关闭翻译后隐藏并清空本次译文。
 
@@ -69,7 +71,7 @@ macOS 26 / iOS、iPadOS 26 及以上使用系统原生 Liquid Glass：工具栏�
 
 ## iPhone/iPad 构建与灵动岛
 
-已经提供 [iPhone/iPad 待签名 IPA](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.6-ambient-glass)。下载 `VerseDock-iOS-unsigned.ipa`，使用自己的 Apple 签名身份重新签名安装。包内保留灵动岛/锁屏扩展，最低 iOS/iPadOS 17；本次已完成标准 Xcode 设备构建，但尚未签名或真机验收。详细说明见 [docs/IPA.zh-CN.md](docs/IPA.zh-CN.md)。
+已经提供 [iPhone/iPad 待签名 IPA](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.7-design)。下载 `VerseDock-iOS-unsigned.ipa`，使用自己的 Apple 签名身份重新签名安装。包内保留灵动岛/锁屏扩展，最低 iOS/iPadOS 17；本次已完成标准 Xcode 设备构建，但尚未签名或真机验收。详细说明见 [docs/IPA.zh-CN.md](docs/IPA.zh-CN.md)。
 
 打开 `VerseDock.xcodeproj`，选择 `VerseDock` scheme。选择你的 Apple 开发者 Team 和设备。部署目标 iOS/iPadOS 17；灵动岛要求具备相应硬件的 iPhone。开启 App 中的实时活动按钮后，系统管理灵动岛和锁屏显示。
 

@@ -8,8 +8,8 @@ import SwiftUI
     var body: some Scene {
         #if os(macOS)
         WindowGroup("VerseDock", id: "main") {
-            ContentView(model: model).frame(minWidth: 400, minHeight: 600)
-        }.defaultSize(width: 480, height: 740).windowStyle(.hiddenTitleBar)
+            ContentView(model: model).frame(minWidth: 400, minHeight: 580)
+        }.defaultSize(width: 900, height: 660).windowStyle(.hiddenTitleBar)
         #else
         WindowGroup { ContentView(model: model) }
         #endif

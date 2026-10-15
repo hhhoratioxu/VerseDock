@@ -144,6 +144,33 @@ struct VerseControlStyle: ButtonStyle {
     }
 }
 
+struct VerseQuietStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View { Feedback(configuration: configuration) }
+    private struct Feedback: View {
+        let configuration: ButtonStyle.Configuration
+        @State private var hovered = false
+        @Environment(\.verseMotionEnabled) private var motion
+        @Environment(\.accessibilityReduceMotion) private var reduceMotion
+        var body: some View {
+            configuration.label
+                .font(.system(size: 12, weight: .medium))
+                .padding(.horizontal, 10)
+                #if os(macOS)
+                .frame(minWidth: 30, minHeight: 30)
+                #else
+                .frame(minWidth: 36, minHeight: 44)
+                #endif
+                .background(.white.opacity(configuration.isPressed ? 0.08 : (hovered ? 0.045 : 0)),
+                            in: RoundedRectangle(cornerRadius: 13))
+                .contentShape(RoundedRectangle(cornerRadius: 13))
+                .scaleEffect(configuration.isPressed && motion && !reduceMotion ? 0.96 : 1)
+                .animation(motion && !reduceMotion ? .easeOut(duration: 0.16) : nil, value: hovered)
+                .animation(motion && !reduceMotion ? .easeOut(duration: 0.12) : nil, value: configuration.isPressed)
+                .onHover { hovered = $0 }
+        }
+    }
+}
+
 /// A quiet playback indicator, not an audio level meter.
 struct VersePlaybackIndicator: View {
     let playing: Bool
@@ -170,6 +197,7 @@ struct VersePlaybackIndicator: View {
 struct VerseArtwork: View {
     let url: URL?
     var size: CGFloat = 72
+    var fallback: Image? = nil
     @State private var hovered = false
     @Environment(\.verseMotionEnabled) private var motion
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -178,21 +206,26 @@ struct VerseArtwork: View {
             ZStack {
                 if let image = phase.image {
                     image.resizable().scaledToFill().frame(width: size, height: size)
-                        .blur(radius: 22).opacity(0.28).scaleEffect(1.15)
+                        .blur(radius: size * 0.2).opacity(0.2).scaleEffect(1.12)
                     image.resizable().scaledToFill().frame(width: size, height: size)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .clipShape(RoundedRectangle(cornerRadius: size > 150 ? 19 : 13))
                         .transition(.opacity)
+                } else if let fallback {
+                    fallback.resizable().scaledToFill().frame(width: size, height: size)
+                        .clipShape(RoundedRectangle(cornerRadius: size > 150 ? 19 : 13))
                 } else {
                     RoundedRectangle(cornerRadius: 12).fill(.white.opacity(0.045))
                     Image(systemName: "music.note").font(.system(size: 23, weight: .light))
                         .foregroundStyle(.white.opacity(0.35))
                 }
             }
-            .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(.white.opacity(0.1), lineWidth: 0.5))
+            .overlay(RoundedRectangle(cornerRadius: size > 150 ? 19 : 13)
+                .strokeBorder(.white.opacity(0.12), lineWidth: 0.5))
         }
         .frame(width: size, height: size)
-        .rotationEffect(.degrees(hovered && motion && !reduceMotion ? -2 : 0))
-        .scaleEffect(hovered && motion && !reduceMotion ? 1.025 : 1)
+        .shadow(color: .black.opacity(0.28), radius: size * 0.09, y: size * 0.055)
+        .rotation3DEffect(.degrees(hovered && motion && !reduceMotion ? 3 : 0), axis: (x: -0.3, y: 1, z: 0))
+        .scaleEffect(hovered && motion && !reduceMotion ? 1.015 : 1)
         .animation(motion && !reduceMotion ? .spring(duration: 0.4, bounce: 0.15) : nil, value: hovered)
         .onHover { hovered = $0 }
         .accessibilityHidden(true)
@@ -204,35 +237,39 @@ struct VerseLyricRow: View {
     let translation: String
     let active: Bool
     let nearby: Bool
+    var fontSize: CGFloat = 28
+    var timestamp: String? = nil
     let action: () -> Void
     @State private var hovered = false
     @Environment(\.verseMotionEnabled) private var motion
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     var body: some View {
         Button(action: action) {
-            VStack(alignment: .leading, spacing: 7) {
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text(text.isEmpty ? "♪" : text)
-                    .font(.system(size: 28, weight: active ? .semibold : .medium))
-                    .tracking(-0.5)
-                    .foregroundStyle(.white.opacity(active ? 1 : (hovered ? 0.72 : (nearby ? 0.53 : 0.27))))
+                    .font(.system(size: fontSize, weight: active ? .semibold : .medium))
+                    .tracking(-0.55).lineSpacing(5)
+                    .foregroundStyle(.white.opacity(active ? 0.98 : (hovered ? 0.72 : (nearby ? 0.48 : 0.22))))
                     .fixedSize(horizontal: false, vertical: true)
                 if !translation.isEmpty {
                     Text(translation)
-                        .font(.system(size: 16, weight: .regular))
-                        .foregroundStyle(.white.opacity(active ? 0.62 : (nearby ? 0.34 : 0.2)))
+                        .font(.system(size: 14, weight: .regular)).lineSpacing(3)
+                        .foregroundStyle(.white.opacity(active ? 0.56 : (nearby ? 0.32 : 0.18)))
                         .fixedSize(horizontal: false, vertical: true)
                         .accessibilityLabel("译文：" + translation)
                         .transition(.opacity)
                 }
+            }.frame(maxWidth: .infinity, alignment: .leading).layoutPriority(1)
+            if let timestamp {
+                Text(timestamp).font(.system(size: 9).monospacedDigit())
+                    .foregroundStyle(.white.opacity(hovered ? 0.45 : 0)).frame(width: 29, alignment: .trailing)
             }
-            .scaleEffect(active || !motion || reduceMotion ? 1 : 0.965, anchor: .leading)
+            }
+            .scaleEffect(active || !motion || reduceMotion ? 1 : 0.975, anchor: .leading)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 10)
             .contentShape(Rectangle())
-            .overlay(alignment: .leading) {
-                Capsule().fill(VerseTheme.accent).frame(width: 2, height: 21)
-                    .offset(x: -15).opacity(active ? 0.85 : 0)
-            }
             .animation(motion && !reduceMotion ? .spring(duration: 0.5, bounce: 0.06) : nil, value: active)
             .animation(motion && !reduceMotion ? .easeOut(duration: 0.18) : nil, value: hovered)
         }
