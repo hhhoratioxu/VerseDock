@@ -1,0 +1,2 @@
+build/VerseDock.app: replacing existing signature
+Built: <PROJECT_ROOT>/build/VerseDock.app

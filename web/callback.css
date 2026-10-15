@@ -1,0 +1,8 @@
+body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #0e1117; color: #f5f5f5; font: 17px system-ui; }
+main { max-width: 520px; padding: 32px; }
+.brand { color: #b8e894; font-weight: 700; letter-spacing: 2px; }
+h1 { font-size: 32px; }
+p { line-height: 1.7; color: #a5acb6; }
+a { display: inline-block; margin-top: 20px; padding: 14px 24px; border-radius: 14px; background: #b8e894; color: #131811; text-decoration: none; font-weight: 700; }
+a[hidden] { display: none; }
+.fine { font-size: 12px; margin-top: 30px; }
