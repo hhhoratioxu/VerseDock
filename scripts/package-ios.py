@@ -112,14 +112,22 @@ with zipfile.ZipFile(ipa) as archive:
 
 digest = hashlib.sha256(ipa.read_bytes()).hexdigest()
 (DIST / 'VerseDock-iOS-unsigned.sha256').write_text(f'{digest}  {IPA_NAME}\n')
-commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
-dirty = bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip())
-tracked_dirty = subprocess.run(['git', 'diff', '--quiet', 'HEAD', '--'], cwd=ROOT).returncode != 0
+git_root = subprocess.run(['git', 'rev-parse', '--show-toplevel'], cwd=ROOT, text=True,
+                          stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+has_repository = git_root.returncode == 0 and Path(git_root.stdout.strip()).resolve() == ROOT
+if has_repository:
+    commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+    dirty = bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip())
+    tracked_dirty = subprocess.run(['git', 'diff', '--quiet', 'HEAD', '--'], cwd=ROOT).returncode != 0
+else:
+    commit = dirty = tracked_dirty = None
 xcode = subprocess.check_output(['/usr/bin/xcodebuild', '-version'], text=True).strip()
 record = {'artifact': IPA_NAME, 'bytes': ipa.stat().st_size, 'sha256': digest, 'signed': False,
           'provisioningProfileIncluded': False, 'requiresResigning': True, 'deviceTested': False,
           'sourceCommit': commit, 'sourceWorkingTreeDirty': dirty,
-          'sourceTrackedFilesDirty': tracked_dirty, 'sourceArchiveIncludesOnlyTrackedFiles': True,
+          'sourceTrackedFilesDirty': tracked_dirty,
+          'sourceArchiveIncludesOnlyTrackedFiles': True if has_repository else None,
+          'sourceProvenance': 'git' if has_repository else 'source-archive',
           'xcode': xcode, 'bundles': [main, extension]}
 (DIST / 'VerseDock-iOS-BuildInfo.json').write_text(json.dumps(record, ensure_ascii=False, indent=2) + '\n')
 print(json.dumps(record, ensure_ascii=False, indent=2))

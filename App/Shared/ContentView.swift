@@ -577,7 +577,7 @@ struct SettingsView: View {
                     Button("保存连接设置") { model.saveSettings() }
                 }
                 Section("关于") {
-                    Text("VerseDock 0.1.9 · 原创原生实现")
+                    Text("VerseDock \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0") · 原创原生实现")
                     Text("独立 Spotify 歌词伴侣。应用代码从零编写，无第三方歌词插件或 Spotify 客户端补丁。歌词内容归其权利人所有。")
                         .font(.caption).foregroundStyle(.secondary)
                 }

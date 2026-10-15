@@ -2,7 +2,7 @@
 
 **简体中文** · [English](IPA.en.md)
 
-GitHub 最新预览版：[v0.1.9-apple-style](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.9-apple-style)。包含歌词点击跳转、可选 Spotify 网页原词会话和双语显示；设备构建通过，Mac 原词已取得真实账户结果；iOS 网页会话、播放控制和真机功能仍待签名后验收。
+GitHub 最新发布：[v1.0.0](https://github.com/hhhoratioxu/VerseDock/releases/tag/v1.0.0)。包含歌词点击跳转、可选 Spotify 网页原词会话和双语显示；设备构建通过，Mac 原词已取得真实账户结果；iOS 网页会话、播放控制和真机功能仍待签名后验收。
 
 `VerseDock-iOS-unsigned.ipa` 是从本项目完整编译出的 iOS 设备 App，包含实际的 arm64 主程序和 `VerseDockActivity.appex` 灵动岛/锁屏实时活动扩展。最低 iOS/iPadOS 17，支持 iPhone 和 iPad。它不是模拟器程序，也不是仅把源码改了后缀。
 
@@ -40,7 +40,7 @@ zsh scripts/build-ios-unsigned.sh
 
 脚本使用标准 `xcodebuild` 编译 Release 设备版本，明确关闭签名，再通过 `package-ios.py` 验证与打包。检查包括 iPhoneOS 平台、arm64 Mach-O、最低系统版本、可执行权限、主 App 和扩展的 ID/版本关系、WidgetKit 声明、Live Activity 开关、OAuth URL scheme、ZIP 完整性和签名材料排除。
 
-构建日志保留在本地 `build/ios-build.log`，不上传含个人路径的原始日志。公开构建摘要在 `Evidence/ios-device-build.json`。打包成功不等于真机验收：本次没有签名证书，也没有安装到 iPhone/iPad，安装、授权、灵动岛实际布局和后台 APNs 送达仍待签名后的设备验证。
+构建日志保留在本地 `build/ios-build.log`，不上传含个人路径的原始日志。首次设备构建摘要在 `Evidence/ios-device-build.json`，1.0 发布检查见 `Evidence/release-1.0.0.json`。打包成功不等于真机验收：本次没有签名证书，也没有安装到 iPhone/iPad，安装、授权、灵动岛实际布局和后台 APNs 送达仍待签名后的设备验证。
 
 ## Apple 官方签名资料
 

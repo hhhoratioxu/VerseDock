@@ -1,0 +1,124 @@
+{
+  "date": "2026-10-15",
+  "version": "1.0.0",
+  "build": "100",
+  "releaseChannel": "stable",
+  "originalImplementation": true,
+  "allReleaseNotesAndUsageDocumentsBilingual": true,
+  "macOS": {
+    "architecture": "arm64",
+    "minimumOS": "14.0",
+    "installedAndLaunched": true,
+    "strictBuildCandidateAndInstalledSignature": true,
+    "installedExecutableMatchesBuild": true,
+    "executableSHA256": "7a7999c0829a92d3d0903a7ecf3d167d095ed811ea204658145d5c0e3b7c38e1",
+    "developerIDNotarized": false,
+    "singleMainWindowScene": true,
+    "nativeMainWindowID": "main",
+    "closeAndAppEntryWindowObserved": true,
+    "zeroVisibleWindowsIndependentlyObserved": false,
+    "compactWindowPoints": [
+      480,
+      740
+    ],
+    "compactScreenshotPixels": [
+      960,
+      1480
+    ],
+    "settingsShortcutAndAppearanceOpened": true,
+    "preferencesObserved": {
+      "glassStrength": 0,
+      "albumBackgroundStrength": 1,
+      "flowEnabled": true,
+      "motionEnabled": true,
+      "menuCharacters": 18,
+      "menuScrolling": false,
+      "overlayFont": 28
+    },
+    "spotifyOriginalsObserved": true,
+    "spotifyLyricProvider": "Musixmatch",
+    "realPlaybackControlledByAgent": false,
+    "observedPlaybackState": "paused",
+    "observedPositionText": "0:04",
+    "observedDurationText": "4:53",
+    "pendingManualUnlockChecks": [
+      "wide window command",
+      "translation and connection settings pages",
+      "return from original demo to real Spotify"
+    ],
+    "literalDockClickChecked": false
+  },
+  "tests": {
+    "coreXCTest": {
+      "cases": 42,
+      "failures": 0
+    },
+    "webBridge": {
+      "cases": 6,
+      "passed": true,
+      "realNetworkUsed": false,
+      "realCredentialsUsed": false
+    },
+    "relay": {
+      "cases": 9,
+      "failures": 0,
+      "realLocalHTTP": true,
+      "realAPNsDelivery": false
+    }
+  },
+  "fallbackLiveCheck": {
+    "provider": "QQ Music",
+    "outcome": "matched",
+    "timedLines": 80,
+    "lyricTextIncluded": false
+  },
+  "macDMG": {
+    "appVersion": "1.0.0",
+    "buildNumber": "100",
+    "architecture": "arm64",
+    "minimumOS": "14.0",
+    "strictSignature": true,
+    "readOnlyMountVerified": true,
+    "mountedExecutableMatchesBuild": true,
+    "executableSHA256": "7a7999c0829a92d3d0903a7ecf3d167d095ed811ea204658145d5c0e3b7c38e1",
+    "bytes": 3902812,
+    "sha256": "8326e80400c5ce5666257a3444609d512cd052691328d1a4af521f2627bb995f"
+  },
+  "iOS": {
+    "standardReleaseDeviceBuildPassed": true,
+    "appAndLiveActivityExtensionVersion": "1.0.0 (100)",
+    "signed": false,
+    "provisioningProfileIncluded": false,
+    "physicalDeviceTested": false,
+    "APNsDeliveryTested": false,
+    "validLocalAppleSigningIdentities": 0
+  },
+  "sourcePackaging": {
+    "explicitSwiftSourceManifest": "Config/SwiftSources.json",
+    "sourceGroups": {
+      "core": 9,
+      "shared": 10,
+      "macOS": 4,
+      "iOS": 2,
+      "liveActivity": 2,
+      "tests": 5
+    },
+    "manifestMatchesTrackedSwiftSources": true,
+    "swiftPackageManifestParsed": true,
+    "standaloneIPAPackaging": {
+      "standaloneSourceArchivePackaging": true,
+      "gitNotRequired": true,
+      "sourceCommitUnavailableReportedAsNull": true,
+      "identicalIPABytes": true,
+      "signed": false,
+      "deviceTested": false,
+      "sha256": "284b2aedbc5a9d4ba614f638b91745bd403ec57bb183d03f72cf1db45f2b1631"
+    }
+  },
+  "limits": [
+    "Mac uses local ad hoc signing; Developer ID notarization is unavailable.",
+    "iPhone/iPad signing, physical-device layout, Dynamic Island, OAuth and APNs delivery require external setup and device acceptance.",
+    "Older materials, system accessibility, other Macs and Intel have not been independently exercised."
+  ],
+  "privacy": "Public evidence excludes commercial lyric bodies, account details, cookies, tokens, authorization headers and signing materials."
+}

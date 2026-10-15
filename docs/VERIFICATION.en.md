@@ -4,6 +4,23 @@
 
 Latest inspection: 2026-10-15, Asia/Shanghai. New records appear first; delivery evidence follows in historical order. Final settings and unavailable integrations in historical entries describe their state at that time.
 
+## 2026-10-15: 1.0.0 stable-release checks
+
+| Item | Result and evidence |
+|---|---|
+| Version and scope | Mac, iOS app and Live Activity extension are unified at 1.0.0 (100). GitHub uses a regular Release for the Mac app, DMG, unsigned IPA and complete source. iOS signing/device limits remain explicit. |
+| Main window | Mac uses a single SwiftUI Window, restored through the app entry. Window → Compact / Wide (紧凑窗口 / 舒展窗口), or ⌥⌘1 / ⌥⌘2, selects layouts. Its native ID is main, replacing multiple main-lyrics WindowGroup instances. After closing and reacquiring the app, main and its native toolbar were visible. The tool activates the app automatically; this does not establish a literal Dock click or observation of a zero-window state. |
+| Completed runtime checks | Installed/launched local 1.0.0 and observed actual Spotify / Musixmatch originals, with real playback paused at 0:04 / 4:53. The explicitly marked original demo was then used without controlling real Spotify audio. ⌥⌘1 actually produced a 480 × 740 compact window, captured at 960 × 1480 pixels. ⌘, opened the separate Settings window and Appearance page. |
+| Preferences and this run's limits | Observed preferences were 0% glass, 100% background, flow/motion on, static 18-character menu bar and overlay font 28. They were not reset to defaults. When continuing to Translation settings, the tool reported a locked Mac. Final wide-window switching, Translation/Connection pages and returning from the original demo to real playback still await unlocking. Earlier-version checks are not represented as repeated passes. |
+| Automated tests | Actually ran 42 core XCTest cases, six offline web-bridge tests and nine relay tests; all passed. The bridge uses no real credentials. Relay tests exercise real local HTTP with APNs doubles, not actual Apple delivery. |
+| Online fallback | The same 1.0 Swift client actually retrieved 80 synchronized QQ Music lines. Public evidence records only provider/count/result, not commercial lyric text. Original priority and existing error distinctions are preserved. |
+| Mac build/signature | Final optimized build passed. Signed output now lives outside cloud-synchronized folders, with build/VerseDock.app pointing to it; source-resource attributes are no longer recursively stripped. Build, install candidate and installed app passed strict signature validation. Installed/build executable SHA-256 values match. The previous installed app is retained. |
+| Mac DMG | Adds the app, Applications drag target and bilingual instructions. Image integrity, read-only mounting, embedded strict signature and executable-identity checks passed. The image was detached after inspection. |
+| iOS/source packaging | Standard iPhone/iPad app and Live Activity extension Release device builds passed with matching versions. Packaging actually ran in a separate non-Git temporary directory and produced an identical IPA; unavailable commits are reported as null. SwiftPM, direct scripts and Xcode use explicit source lists, excluding temporary Swift copies. |
+| Outstanding platform acceptance | Zero valid Apple signing identities are available locally. Mac is locally/ad hoc signed without Developer ID notarization. IPA has no Apple signature/personal profile; iPhone/iPad installation, Dynamic Island, iOS authorization and actual APNs delivery remain unaccepted. Older materials, accessibility, other Macs and Intel have not been independently exercised. |
+
+Public summary: `Evidence/release-1.0.0.json`. Signing/hash information accompanies downloads. Release notes and usage documents retain complete Chinese/English versions. Historical entries below retain their release-time states.
+
 ## 2026-10-15: 0.1.9 runtime follow-up and sharp default artwork
 
 | Item | Result and evidence |

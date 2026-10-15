@@ -144,6 +144,17 @@ import VerseCore
         }
         NSApp.activate(ignoringOtherApps: true)
     }
+    func resizeMainWindow(compact: Bool) {
+        showMainWindow()
+        guard let window = NSApp.windows.first(where: { $0.title == "VerseDock" }) else { return }
+        let size = compact ? NSSize(width: 480, height: 740) : NSSize(width: 900, height: 660)
+        var frame = window.frame
+        frame.origin.y = frame.maxY - size.height
+        frame.size = size
+        frame = window.constrainFrameRect(frame, to: window.screen)
+        let animate = model?.interfaceMotionEnabled == true && !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
+        window.setFrame(frame, display: true, animate: animate)
+    }
     @objc private func quit() { NSApp.terminate(nil) }
 }
 

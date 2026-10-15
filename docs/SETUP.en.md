@@ -4,7 +4,7 @@
 
 ## Mac
 
-1. Download and extract the Mac ZIP, move `VerseDock.app` to Applications and open it. For local builds, run `build/VerseDock.app`. A Dock icon is present; its entry can reopen the main window.
+1. Open the Mac DMG and drag `VerseDock` to `Applications`, or extract the ZIP and move `VerseDock.app` to Applications. For local builds, run `build/VerseDock.app`. A Dock icon is present; its entry can reopen the main window.
 2. Open the Spotify desktop app and start playback. VerseDock reads the local track/playback state every second and updates its own synchronization timeline every 0.1 seconds.
 3. Allow macOS Automation. If previously denied, go to System Settings → Privacy & Security → Automation and allow VerseDock to read Spotify.
 4. Automatic fallback searches LRCLIB, QQ Music, NetEase Cloud Music and lyrics.ovh, switching after failure. An older preference that disabled networking is preserved and can be enabled in Settings. You can import UTF-8 `.lrc` / `.txt` files, bound to the current Spotify track ID. Retry bypasses caches. The footer shows the actual source and duration difference.
@@ -18,7 +18,7 @@ The current app uses a local ad hoc signature for development acceptance. Distri
 
 ## Interface and Liquid Glass
 
-Version 0.1.9 uses the system toolbar. The gear and ⌘, open a separate Mac Settings window; iPhone/iPad use native category lists with back navigation. Categories are Appearance, Lyrics, Translation and Connection. Appearance contains glass, artwork-background and Mac display options; Lyrics manages providers and the original-lyrics session; Translation selects languages; Connection manages phone OAuth and the relay. More Actions contains retry, LRC import and the original demo. Wide windows use cover/lyrics columns, while small windows use the compact layout. New Mac windows default to 900 × 660.
+Version 1.0.0 uses the system toolbar and a single main lyrics window. The gear and ⌘, open a separate Mac Settings window; iPhone/iPad use native category lists with back navigation. Categories are Appearance, Lyrics, Translation and Connection. Appearance contains glass, artwork-background and Mac display options; Lyrics manages providers and the original-lyrics session; Translation selects languages; Connection manages phone OAuth and the relay. More Actions contains retry, LRC import and the original demo. Wide windows use cover/lyrics columns, while small windows use the compact layout. The Mac main window defaults to 900 × 660. Window → Compact / Wide (紧凑窗口 / 舒展窗口), or ⌥⌘1 / ⌥⌘2, switches between 480 × 740 and 900 × 660.
 
 Liquid Glass Strength ranges from the clearest look to the strongest tint; Background Color Strength is independent. Both preview immediately and save automatically. Colors are extracted locally from real artwork and transition softly. Album Artwork Background and Soft Background Flow have separate switches. New defaults are 40% glass and 65% background. Missing artwork uses neutral colors; text remains opaque. The system controls the native main-window toolbar's appearance. App strength controls affect the small footer group, floating window and Settings preview without overriding system toolbar glass preferences. Middle values use lighter tint; 100% retains the full tint. Settings follow system appearance, while the listening window stays dark.
 

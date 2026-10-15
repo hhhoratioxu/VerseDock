@@ -3,6 +3,7 @@
 import hashlib
 import json
 from pathlib import Path
+import plistlib
 import stat
 import subprocess
 import zipfile
@@ -25,6 +26,7 @@ def write_archive(output, files, prefix, relative_root):
 app = ROOT / 'build' / 'VerseDock.app'
 if not (app / 'Contents' / 'MacOS' / 'VerseDockMac').exists():
     raise SystemExit('Build Mac app before packaging.')
+app_info = plistlib.loads((app / 'Contents/Info.plist').read_bytes())
 app_files = [p for p in app.rglob('*') if p.is_file() and p.name != '.DS_Store']
 app_zip = DIST / 'VerseDock-macOS-arm64.zip'
 write_archive(app_zip, app_files, 'VerseDock.app/', app)
@@ -53,7 +55,24 @@ if artwork.is_dir() and icon_resources.is_dir():
     artifacts.append(icon_zip)
 ios_ipa = DIST / 'VerseDock-iOS-unsigned.ipa'
 if ios_ipa.is_file():
+    with zipfile.ZipFile(ios_ipa) as archive:
+        ios_info = plistlib.loads(archive.read('Payload/VerseDock.app/Info.plist'))
+    for key in ('CFBundleShortVersionString', 'CFBundleVersion'):
+        if ios_info[key] != app_info[key]:
+            raise SystemExit('Mac and iOS versions differ; rebuild the iOS package.')
     artifacts.append(ios_ipa)
+for filename in ('VerseDock-macOS-arm64.dmg', 'VerseDock-macOS-BuildInfo.json',
+                 'VerseDock-iOS-unsigned.sha256', 'VerseDock-iOS-BuildInfo.json'):
+    path = DIST / filename
+    if path.is_file():
+        artifacts.append(path)
+mac_build_info = DIST / 'VerseDock-macOS-BuildInfo.json'
+if mac_build_info.is_file():
+    record = json.loads(mac_build_info.read_text())
+    if (record['appVersion'] != app_info['CFBundleShortVersionString']
+            or record['buildNumber'] != app_info['CFBundleVersion']
+            or record['sha256'] != hashlib.sha256((DIST / record['artifact']).read_bytes()).hexdigest()):
+        raise SystemExit('Mac disk image metadata does not match the current build.')
 for path in artifacts:
     manifest[path.name] = {'bytes': path.stat().st_size, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
 (DIST / 'SHA256.json').write_text(json.dumps(manifest, indent=2) + '\n')

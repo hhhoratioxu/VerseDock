@@ -1,0 +1,46 @@
+{
+  "core": [
+    "Sources/VerseCore/LyricMarquee.swift",
+    "Sources/VerseCore/LyricTranslationPlan.swift",
+    "Sources/VerseCore/Lyrics.swift",
+    "Sources/VerseCore/LyricsClient.swift",
+    "Sources/VerseCore/LyricsMatching.swift",
+    "Sources/VerseCore/OAuth.swift",
+    "Sources/VerseCore/Playback.swift",
+    "Sources/VerseCore/PlaybackSeeking.swift",
+    "Sources/VerseCore/SpotifyLyrics.swift"
+  ],
+  "shared": [
+    "App/Shared/AlbumAppearance.swift",
+    "App/Shared/ContentView.swift",
+    "App/Shared/KeychainStore.swift",
+    "App/Shared/LyricStore.swift",
+    "App/Shared/LyricTranslationView.swift",
+    "App/Shared/RelayClient.swift",
+    "App/Shared/SpotifyLyricsSession.swift",
+    "App/Shared/VerseDockApp.swift",
+    "App/Shared/VerseModel.swift",
+    "App/Shared/VerseMotion.swift"
+  ],
+  "macOS": [
+    "App/macOS/OverlayController.swift",
+    "App/macOS/SpotifyLyricsWindowController.swift",
+    "App/macOS/SpotifyReader.swift",
+    "App/macOS/StatusBarController.swift"
+  ],
+  "iOS": [
+    "App/iOS/LiveActivityController.swift",
+    "App/iOS/SpotifyAuthentication.swift"
+  ],
+  "liveActivity": [
+    "App/LiveActivity/LyricsActivityAttributes.swift",
+    "App/LiveActivity/VerseDockActivityWidget.swift"
+  ],
+  "tests": [
+    "Tests/VerseCoreTests/LyricTranslationTests.swift",
+    "Tests/VerseCoreTests/LyricsClientTests.swift",
+    "Tests/VerseCoreTests/LyricsTests.swift",
+    "Tests/VerseCoreTests/OAuthTests.swift",
+    "Tests/VerseCoreTests/SpotifyLyricsTests.swift"
+  ]
+}

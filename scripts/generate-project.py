@@ -2,6 +2,7 @@
 """Generate a deterministic native Xcode project without external generators."""
 import hashlib
 from pathlib import Path
+from source_manifest import source_groups
 
 ROOT = Path(__file__).resolve().parent.parent
 objects = {}
@@ -33,16 +34,20 @@ def configurations(name, settings):
     return add(f'{name}:configurations', isa='XCConfigurationList', buildConfigurations=refs,
                defaultConfigurationIsVisible='0', defaultConfigurationName='Release')
 
+groups = source_groups()
+swift_files = {path for paths in groups.values() for path in paths}
 all_files = sorted(str(p.relative_to(ROOT)) for directory in ('Sources', 'App', 'Config')
                    for p in (ROOT / directory).rglob('*')
                    if (p.is_file() or p.suffix == '.xcassets')
                    and p.name != '.DS_Store'
+                   and (p.suffix != '.swift' or str(p.relative_to(ROOT)) in swift_files)
                    and not any(parent.suffix == '.xcassets' for parent in p.parents))
 references = {}
 for path in all_files:
     kind = 'sourcecode.swift' if path.endswith('.swift') else (
         'folder.assetcatalog' if path.endswith('.xcassets') else (
-        'image.icns' if path.endswith('.icns') else ('image.png' if path.endswith('.png') else 'text.plist.xml')))
+        'image.icns' if path.endswith('.icns') else ('image.png' if path.endswith('.png') else (
+        'text.json' if path.endswith('.json') else 'text.plist.xml'))))
     references[path] = add('file:' + path, isa='PBXFileReference', lastKnownFileType=kind,
                            path=path, sourceTree='<group>')
 
@@ -66,12 +71,12 @@ def dependency(name, target):
 
 common = {'SWIFT_VERSION': '5.0', 'CLANG_ENABLE_MODULES': 'YES', 'CODE_SIGN_STYLE': 'Automatic',
           'MACOSX_DEPLOYMENT_TARGET': '14.0', 'IPHONEOS_DEPLOYMENT_TARGET': '17.0',
-          'MARKETING_VERSION': '0.1.9', 'CURRENT_PROJECT_VERSION': '10'}
-core = [p for p in all_files if p.startswith('Sources/') and p.endswith('.swift')]
-shared = [p for p in all_files if p.startswith('App/Shared/') and p.endswith('.swift')]
-mac = [p for p in all_files if p.startswith('App/macOS/') and p.endswith('.swift')]
-ios = [p for p in all_files if p.startswith('App/iOS/') and p.endswith('.swift')]
-widget = [p for p in all_files if p.startswith('App/LiveActivity/') and p.endswith('.swift')]
+          'MARKETING_VERSION': '1.0.0', 'CURRENT_PROJECT_VERSION': '100'}
+core = groups['core']
+shared = groups['shared']
+mac = groups['macOS']
+ios = groups['iOS']
+widget = groups['liveActivity']
 specifications = {
  'VerseCore': (core, {'PRODUCT_NAME': 'VerseCore', 'PRODUCT_MODULE_NAME': 'VerseCore', 'DEFINES_MODULE': 'YES',
                      'SKIP_INSTALL': 'YES', 'SUPPORTED_PLATFORMS': 'macosx iphoneos iphonesimulator',

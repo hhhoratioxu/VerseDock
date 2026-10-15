@@ -2,7 +2,7 @@
 
 [简体中文](IPA.zh-CN.md) · **English**
 
-Latest GitHub preview: [v0.1.9-apple-style](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.9-apple-style). It includes lyric seeking, an optional Spotify web-lyrics session and bilingual display. Device builds passed and Mac originals have real-account results; the iOS web session, playback controls and physical-device features still await signing and acceptance.
+Latest GitHub release: [v1.0.0](https://github.com/hhhoratioxu/VerseDock/releases/tag/v1.0.0). It includes lyric seeking, an optional Spotify web-lyrics session and bilingual display. Device builds passed and Mac originals have real-account results; the iOS web session, playback controls and physical-device features still await signing and acceptance.
 
 `VerseDock-iOS-unsigned.ipa` is a fully compiled iOS device app from this project. It contains the actual arm64 main executable and `VerseDockActivity.appex` for Dynamic Island/Lock Screen Live Activities. It supports iPhone and iPad with minimum iOS/iPadOS 17. It is a device build, not a simulator executable or renamed source archive.
 
@@ -40,7 +40,7 @@ zsh scripts/build-ios-unsigned.sh
 
 The script uses standard `xcodebuild` for a Release device build with signing explicitly disabled, then validates and packages through `package-ios.py`. Checks include iPhoneOS platform, arm64 Mach-O, minimum OS, executable permissions, app/extension ID and version relationships, WidgetKit declarations, Live Activity flags, the OAuth URL scheme, ZIP integrity and exclusion of signing material.
 
-Raw build logs remain locally in `build/ios-build.log`; logs containing personal paths are not uploaded. Public build information is in `Evidence/ios-device-build.json`. Packaging success is separate from physical-device acceptance. No signing certificate was available and no installation on iPhone/iPad was performed. Installation, authorization, actual Dynamic Island layout and background APNs delivery still require signed-device validation.
+Raw build logs remain locally in `build/ios-build.log`; logs containing personal paths are not uploaded. The initial device-build summary is in `Evidence/ios-device-build.json`; 1.0 release checks are in `Evidence/release-1.0.0.json`. Packaging success is separate from physical-device acceptance. No signing certificate was available and no installation on iPhone/iPad was performed. Installation, authorization, actual Dynamic Island layout and background APNs delivery still require signed-device validation.
 
 ## Official Apple signing references
 

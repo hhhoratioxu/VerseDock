@@ -12,11 +12,11 @@ VerseDock is a standalone companion. It reads Spotify playback through local aut
 
 Repository: [hhhoratioxu/VerseDock](https://github.com/hhhoratioxu/VerseDock). Download the packaged Mac app from [Releases](https://github.com/hhhoratioxu/VerseDock/releases). Source, the Xcode project and setup instructions are also in this repository.
 
-The current version is [v0.1.9-apple-style](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.9-apple-style). It adopts native Apple interactions: the system toolbar, a separate Mac Settings window and category navigation on iOS. Neutral controls and spacing replace the full-width glass strip. The flowing artwork background and adjustable glass strength remain. Previously verified Spotify-original priority, fallback, lyric seeking, Dock and menu bar entry points are preserved. See [original icon assets](Artwork/README.en.md).
+The current stable release is [v1.0.0](https://github.com/hhhoratioxu/VerseDock/releases/tag/v1.0.0), with a Mac app, DMG installer, unsigned iPhone/iPad IPA and complete source. Mac uses native Apple toolbars, a separate Settings window and a single main lyrics window. Flowing artwork colors, adjustable glass, Spotify-original priority, fallback providers, translation, lyric seeking, Dock and menu bar entries remain available. The iOS package still needs your own signing; device/APNs status is documented in the verification record. See [original icon assets](Artwork/README.en.md).
 
-Version 0.1.9 fixes blurry enlarged default artwork by reusing the project's original 1024-pixel image on Mac and iOS. Both platforms built successfully. The installed Mac app was checked for the main window, four Settings tabs, the keyboard shortcut, original-above-translation lyrics and glass strength. Follow-up checks exercised native window zoom/restore and returned from the original demo to real Spotify lyrics. See the [verification record](docs/VERIFICATION.en.md) for version-specific coverage of compact windows and other checks. Follow-up changes affect documentation only; release packages retain their original build commit.
+Version 1.0.0 (100) unifies platform versions and adds Compact/Wide window commands. Explicit source lists define builds, and packaging iOS from a downloaded source archive no longer requires Git metadata. Forty-two core tests, six offline web-bridge tests and nine relay tests passed. The installed Mac app retrieved actual Spotify / Musixmatch originals; iOS app and Live Activity extension device builds passed. The DMG was mounted read-only and its executable/signature verified. See the [verification record](docs/VERIFICATION.en.md) for runtime coverage and limits.
 
-Download and extract `VerseDock-macOS-arm64.zip`, move `VerseDock.app` to Applications, and open it. It has a Dock icon; the Dock entry can reopen the main window, and closing that window leaves menu bar lyrics running. A local build is available at `build/VerseDock.app`:
+Download `VerseDock-macOS-arm64.dmg` and drag `VerseDock` to `Applications`. Alternatively, extract the ZIP and move `VerseDock.app` to Applications. It has a Dock icon; the Dock entry can reopen the main window, and closing that window leaves menu bar lyrics running. A local build is available at `build/VerseDock.app`:
 
 ~~~sh
 open build/VerseDock.app
@@ -49,7 +49,7 @@ Matching normalizes simplified/traditional Chinese, punctuation and multiple-art
 
 ## Liquid Glass and motion
 
-Wide windows place artwork and song information on the left and lyrics on the right; smaller windows use a compact layout. New Mac windows default to 900 × 660 and can be resized. The current line stands out, translations use lighter typography, and hover reveals timestamps. When following is enabled, translation batches and size changes recenter the current line. More Actions at the top contains retry and LRC import; source, timing and floating-window controls are at the bottom. Settings have Appearance, Lyrics, Translation and Connection categories, preserving existing preferences.
+Wide windows place artwork and song information on the left and lyrics on the right; smaller windows use a compact layout. The Mac main window defaults to 900 × 660 and can be resized. Window → Compact / Wide (紧凑窗口 / 舒展窗口), or ⌥⌘1 / ⌥⌘2, switches between 480 × 740 and 900 × 660. The current line stands out, translations use lighter typography, and hover reveals timestamps. When following is enabled, translation batches and size changes recenter the current line. More Actions at the top contains retry and LRC import; source, timing and floating-window controls are at the bottom. Settings have Appearance, Lyrics, Translation and Connection categories, preserving existing preferences.
 
 On macOS / iOS / iPadOS 26 or later, native Liquid Glass is used for top tool groups, bottom source/timing controls and the Mac overlay; the follow button uses lighter feedback. Lyric text stays clear and opaque. Older systems fall back to frosted materials; minimum systems remain macOS 14 / iOS 17. Native materials follow [Apple's Liquid Glass documentation](https://developer.apple.com/documentation/SwiftUI/Applying-Liquid-Glass-to-custom-views); application layout and interaction code was written independently.
 
@@ -75,7 +75,7 @@ Bilingual background pushes require both Mac and phone to enable translation wit
 
 ## iPhone/iPad builds and Dynamic Island
 
-An [unsigned iPhone/iPad IPA](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.9-apple-style) is available. Download `VerseDock-iOS-unsigned.ipa` and sign/install it with your own Apple identity. It retains the Dynamic Island/Lock Screen extension, with minimum iOS/iPadOS 17. A standard Xcode device build passed, but signing and physical-device acceptance are incomplete. See [IPA instructions](docs/IPA.en.md).
+An [unsigned iPhone/iPad IPA](https://github.com/hhhoratioxu/VerseDock/releases/tag/v1.0.0) is available. Download `VerseDock-iOS-unsigned.ipa` and sign/install it with your own Apple identity. It retains the Dynamic Island/Lock Screen extension, with minimum iOS/iPadOS 17. A standard Xcode device build passed, but signing and physical-device acceptance are incomplete. See [IPA instructions](docs/IPA.en.md).
 
 Open `VerseDock.xcodeproj`, select the `VerseDock` scheme, then choose your Apple development Team and device. Dynamic Island requires an iPhone with that hardware. Start a Live Activity in the app; the system manages its Dynamic Island and Lock Screen presentation.
 
@@ -118,10 +118,15 @@ node Tests/WebBridge/run-tests.mjs
 # Regenerate the deterministic Xcode project
 python3 scripts/generate-project.py
 
+# Create and mount-check the Mac DMG
+python3 scripts/package-mac-dmg.py
+
 # Optional relay tests, after installing its dependencies as described in SETUP
 cd relay
 .venv/bin/python -m unittest -v test_server.py
 ~~~
+
+Build inputs are explicitly listed in `Config/SwiftSources.json`. Signed Mac output lives under local `~/Library/Developer/VerseDock/Builds/`, with `build/VerseDock.app` pointing to that build. This avoids cloud-folder metadata interfering with signatures; source files and original resources are not stripped of extended attributes.
 
 The first delivery on 2026-10-13 completed the Mac build and iOS type checks; standard Xcode builds were then blocked by the environment. On 2026-10-15, the license check passed, and the iOS app and Live Activity extension fully compiled through standard `xcodebuild` and were packaged as an unsigned IPA. No usable Apple signing certificate was available, and the app has not been installed on iPhone/iPad or accepted for real Dynamic Island/APNs behavior.
 
