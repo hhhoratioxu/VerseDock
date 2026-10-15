@@ -10,7 +10,7 @@
 
 GitHub 仓库：[hhhoratioxu/VerseDock](https://github.com/hhhoratioxu/VerseDock)。打包的 Mac App 在 [Releases](https://github.com/hhhoratioxu/VerseDock/releases) 中提供；源码、Xcode 工程和安装说明直接保存在仓库内。
 
-当前版本为 [v0.1.3-spotify](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.3-spotify)：正常 Dock 入口、独立 Spotify 登录窗口、点击同步歌词跳转，以及实验性 Spotify 原词优先。保留可选备用提供商、可拖动悬浮窗、可调宽度状态栏与可选双语翻译。原创 V 图标与素材说明仍在 [Artwork](Artwork/README.md)。
+当前版本为 [v0.1.4-spotify](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.4-spotify)：正常 Dock 入口、独立 Spotify 登录窗口、点击同步歌词跳转，以及已在本机实际验证的 Spotify 原词优先；修正无词时也保留会话恢复状态。保留可选备用提供商、可拖动悬浮窗、可调宽度状态栏与可选双语翻译。原创 V 图标与素材说明仍在 [Artwork](Artwork/README.md)。
 
 下载 `VerseDock-macOS-arm64.zip` 并解压，将 `VerseDock.app` 放进“应用程序”后双击。运行时显示 Dock 图标，点击 Dock 可重新打开歌词主窗口；关闭主窗口后状态栏歌词仍然继续。本地自行构建的产物位于 `build/VerseDock.app`，也可以在项目目录执行：
 
@@ -45,7 +45,7 @@ Mac 本地读取无需 Spotify Client ID。当前包为 arm64、最低 macOS 14�
 
 ## 歌词原词与翻译
 
-「优先使用 Spotify 原词」默认开启。在设置里打开独立登录窗口，自行登录 Spotify 官方网页；登录框使用正常可输入的独立 Mac 窗口。这个可选接入使用 Spotify 网页播放器的非公开歌词接口，可能受地区、账户、会话或接口变化影响。网页会话有效且读取成功时，Spotify 的同步或纯文本原词均优先；无词才进入备用。授权或网络错误会明确显示，并暂时使用备用，不会把失败说成“Spotify 无歌词”。本机已验证登录窗口输入；真实账户的原词返回仍需完成登录后的检查，不能把解析测试当作接通证明。YouTube Music 与 Apple Music 的歌词尚未接通。详见 [歌词能力与来源说明](docs/LYRICS.zh-CN.md)。
+「优先使用 Spotify 原词」默认开启。在设置里打开独立登录窗口，自行登录 Spotify 官方网页；登录框使用正常可输入的独立 Mac 窗口。这个可选接入使用 Spotify 网页播放器的非公开歌词接口，可能受地区、账户、会话或接口变化影响。网页会话有效且读取成功时，Spotify 的同步或纯文本原词均优先；无词才进入备用。授权或网络错误会明确显示，并暂时使用备用，不会把失败说成“Spotify 无歌词”。本机已实际验证：Spotify 提供《如果呢 / 郑润泽》42 行同步原词时只采用 Spotify；《坏女孩 / 徐良》返回 404，且 Spotify 官方界面同样显示无词时，改用 LRCLIB 同步歌词。YouTube Music 与 Apple Music 的歌词尚未接通。详见 [歌词能力与来源说明](docs/LYRICS.zh-CN.md)。
 
 点击主窗口中有时间戳的歌词行，即可跳到对应演唱位置，已考虑该首歌的校准偏移。Mac 使用本地 Spotify 自动化；iOS 使用官方播放控制权限，需要重新授权旧连接，且 Spotify 对该 API 要求 Premium。纯文本歌词没有可靠时间点，不提供虚假跳转。
 
@@ -57,7 +57,7 @@ Mac 本地读取无需 Spotify Client ID。当前包为 arm64、最低 macOS 14�
 
 ## iPhone/iPad 构建与灵动岛
 
-已经提供 [iPhone/iPad 待签名 IPA](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.3-spotify)。下载 `VerseDock-iOS-unsigned.ipa`，使用自己的 Apple 签名身份重新签名安装。包内保留灵动岛/锁屏扩展，最低 iOS/iPadOS 17；本次已完成标准 Xcode 设备构建，但尚未签名或真机验收。详细说明见 [docs/IPA.zh-CN.md](docs/IPA.zh-CN.md)。
+已经提供 [iPhone/iPad 待签名 IPA](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.4-spotify)。下载 `VerseDock-iOS-unsigned.ipa`，使用自己的 Apple 签名身份重新签名安装。包内保留灵动岛/锁屏扩展，最低 iOS/iPadOS 17；本次已完成标准 Xcode 设备构建，但尚未签名或真机验收。详细说明见 [docs/IPA.zh-CN.md](docs/IPA.zh-CN.md)。
 
 打开 `VerseDock.xcodeproj`，选择 `VerseDock` scheme。选择你的 Apple 开发者 Team 和设备。部署目标 iOS/iPadOS 17；灵动岛要求具备相应硬件的 iPhone。开启 App 中的实时活动按钮后，系统管理灵动岛和锁屏显示。
 

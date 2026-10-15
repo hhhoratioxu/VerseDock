@@ -1,6 +1,6 @@
 # iPhone/iPad 待签名 IPA
 
-GitHub 最新预览版：[v0.1.3-spotify](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.3-spotify)。包含歌词点击跳转、可选 Spotify 网页原词会话和双语显示；设备构建通过，真实账户与真机功能仍待签名后验收。
+GitHub 最新预览版：[v0.1.4-spotify](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.4-spotify)。包含歌词点击跳转、可选 Spotify 网页原词会话和双语显示；设备构建通过，Mac 原词已取得真实账户结果；iOS 网页会话、播放控制和真机功能仍待签名后验收。
 
 `VerseDock-iOS-unsigned.ipa` 是从本项目完整编译出的 iOS 设备 App，包含实际的 arm64 主程序和 `VerseDockActivity.appex` 灵动岛/锁屏实时活动扩展。最低 iOS/iPadOS 17，支持 iPhone 和 iPad。它不是模拟器程序，也不是仅把源码改了后缀。
 

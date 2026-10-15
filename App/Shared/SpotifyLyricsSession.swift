@@ -68,7 +68,11 @@ import VerseCore
         guard let result = raw as? [String: Any], let code = result["status"] as? Int else {
             throw VerseError.message("Spotify 网页歌词响应无效，请重新加载会话")
         }
-        if code == 404 { status = "Spotify 当前歌曲无原词，已转备用来源"; return nil }
+        if code == 404 {
+            UserDefaults.standard.set(true, forKey: "spotifyLyricsRestore")
+            status = "Spotify 当前歌曲无原词，已转备用来源"
+            return nil
+        }
         if code == 401 || code == 403 {
             ready = false; status = "Spotify 歌词授权不可用，请重新登录；当前使用备用来源"
             throw VerseError.message("Spotify 歌词授权不可用（\(code)），这不代表歌曲没有歌词")
@@ -82,7 +86,7 @@ import VerseCore
         guard let body = result["body"] as? [String: Any] else { throw VerseError.message("Spotify 原词响应缺少内容") }
         let data = try JSONSerialization.data(withJSONObject: body)
         let document = try SpotifyLyrics.parse(data, track: track)
-        if document != nil { UserDefaults.standard.set(true, forKey: "spotifyLyricsRestore") }
+        UserDefaults.standard.set(true, forKey: "spotifyLyricsRestore")
         status = document == nil ? "Spotify 当前歌曲没有可用原词，已转备用来源" : "已取得 Spotify 原词，优先显示"
         return document
     }

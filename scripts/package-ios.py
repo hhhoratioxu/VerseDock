@@ -114,10 +114,12 @@ digest = hashlib.sha256(ipa.read_bytes()).hexdigest()
 (DIST / 'VerseDock-iOS-unsigned.sha256').write_text(f'{digest}  {IPA_NAME}\n')
 commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
 dirty = bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip())
+tracked_dirty = subprocess.run(['git', 'diff', '--quiet', 'HEAD', '--'], cwd=ROOT).returncode != 0
 xcode = subprocess.check_output(['/usr/bin/xcodebuild', '-version'], text=True).strip()
 record = {'artifact': IPA_NAME, 'bytes': ipa.stat().st_size, 'sha256': digest, 'signed': False,
           'provisioningProfileIncluded': False, 'requiresResigning': True, 'deviceTested': False,
           'sourceCommit': commit, 'sourceWorkingTreeDirty': dirty,
+          'sourceTrackedFilesDirty': tracked_dirty, 'sourceArchiveIncludesOnlyTrackedFiles': True,
           'xcode': xcode, 'bundles': [main, extension]}
 (DIST / 'VerseDock-iOS-BuildInfo.json').write_text(json.dumps(record, ensure_ascii=False, indent=2) + '\n')
 print(json.dumps(record, ensure_ascii=False, indent=2))

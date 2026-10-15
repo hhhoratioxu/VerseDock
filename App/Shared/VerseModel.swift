@@ -376,8 +376,10 @@ import AppKit
         UserDefaults.standard.set(menuLength, forKey: "menuLength")
         UserDefaults.standard.set(menuScrolling, forKey: "menuScrolling")
         UserDefaults.standard.set(overlayFont, forKey: "overlayFont")
-        do { try KeychainStore.write(Data(relayKey.utf8), account: "relayKey") }
-        catch { notice = "配对密钥保存失败：\(error.localizedDescription)" }
+        if !relayKey.isEmpty {
+            do { try KeychainStore.write(Data(relayKey.utf8), account: "relayKey") }
+            catch { notice = "配对密钥保存失败：\(error.localizedDescription)" }
+        }
     }
     private func saveAdjustment() {
         if let id = snapshot?.track.id { UserDefaults.standard.set(adjustment, forKey: "offset.\(id)") }

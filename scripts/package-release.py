@@ -4,6 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import stat
+import subprocess
 import zipfile
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -29,7 +30,9 @@ app_zip = DIST / 'VerseDock-macOS-arm64.zip'
 write_archive(app_zip, app_files, 'VerseDock.app/', app)
 
 excluded = {'build', '.build', 'dist', '.git', '.venv', '__pycache__', 'xcuserdata'}
-source_files = [p for p in ROOT.rglob('*') if p.is_file()
+tracked = subprocess.check_output(['git', 'ls-files', '-z'], cwd=ROOT).decode().split('\0')
+source_files = [ROOT / name for name in tracked if name]
+source_files = [p for p in source_files if p.is_file()
                 and not any(part in excluded for part in p.relative_to(ROOT).parts)
                 and p.name != '.DS_Store'
                 and p.suffix not in {'.p8', '.pem', '.key', '.p12', '.mobileprovision', '.sqlite', '.pyc'}
