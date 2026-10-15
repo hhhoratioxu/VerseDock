@@ -7,6 +7,10 @@ import AppKit
 @MainActor final class VerseModel: ObservableObject {
     static let shared = VerseModel()
     let albumAppearance = VerseAlbumAppearance()
+    @Published var settingsSection = VerseSettingsSection.appearance
+    #if os(macOS)
+    var presentMainWindow: (() -> Void)?
+    #endif
     @Published var snapshot: PlaybackSnapshot? {
         didSet { albumAppearance.update(snapshot?.track.artworkURL) }
     }

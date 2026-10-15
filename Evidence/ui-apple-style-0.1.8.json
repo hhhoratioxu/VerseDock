@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-15",
+  "appVersion": "0.1.8 (9)",
+  "originalImplementation": true,
+  "thirdPartyUIPackages": false,
+  "implementedChanges": {
+    "systemToolbar": true,
+    "macStandardTitleBar": true,
+    "macIndependentSettingsScene": true,
+    "macNativeSettingsTabs": true,
+    "iOSNativeSettingsNavigation": true,
+    "systemSettingsAppearance": true,
+    "removedFullWidthGlassFooter": true,
+    "neutralMediaControls": true,
+    "removedArtwork3DTilt": true,
+    "mainWindowReopenUsesSwiftUIWindowGroup": true,
+    "appearancePreviewDoesNotMutateWindow": true,
+    "contextualSettingsEntryRetained": true
+  },
+  "preservedFeatures": [
+    "album-colored flowing background",
+    "user glass strength and background concentration",
+    "lyric seek and follow",
+    "optional system translation",
+    "Spotify originals and fallback provider policy",
+    "status bar width and scrolling choice",
+    "movable floating lyrics"
+  ],
+  "glassIntensityScope": [
+    "custom footer tool group",
+    "floating lyrics panel",
+    "appearance preview"
+  ],
+  "systemToolbarMaterial": "managed by Apple standard toolbar and system preferences",
+  "builds": {
+    "macOSarm64": "final optimized build passed",
+    "candidateStrictSignature": "passed",
+    "iOSAppAndWidget": "Release device build passed, unsigned"
+  },
+  "currentMacRuntime": {
+    "finalCandidateInstalled": false,
+    "finalCandidateLaunched": false,
+    "manualUICompleted": false,
+    "blockedBy": "Mac locked; native UI tool requires manual unlock",
+    "newAppScreenshotSaved": false,
+    "pending": [
+      "system toolbar",
+      "all settings tabs and keyboard shortcut",
+      "contextual settings routing",
+      "light/dark settings",
+      "close and reopen main window",
+      "compact and wide layout",
+      "translation recentering",
+      "demo lyric clicks"
+    ]
+  },
+  "userPreferencesModifiedDuringLock": false,
+  "realSpotifyPlaybackChangedByAgent": false,
+  "validationLimits": {
+    "iOSPhysicalDevice": false,
+    "APNsDelivery": false,
+    "olderOSRuntime": false,
+    "accessibilityRuntime": false,
+    "coreAndBridgeTests": "previous executed evidence retained; no lyrics or authorization policy changes"
+  },
+  "privacy": "No commercial lyric bodies, album image files, credentials, cookies, account profiles or signing materials included."
+}

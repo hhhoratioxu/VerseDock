@@ -7,14 +7,13 @@ import AppKit
 
 enum VerseTheme {
     static let ink = Color(red: 0.065, green: 0.068, blue: 0.064)
-    static let accent = Color(red: 0.79, green: 0.88, blue: 0.64)
+    static let accent = Color.white
 }
 
 struct ContentView: View {
     @ObservedObject var model: VerseModel
     @ObservedObject private var albumAppearance: VerseAlbumAppearance
     @State private var settings = false
-    @State private var settingsCategory = VerseSettingsSection.appearance
     @State private var importing = false
     @State private var follow = true
     @State private var sourceDetails = false
@@ -22,6 +21,10 @@ struct ContentView: View {
     @State private var appeared = false
     @Environment(\.scenePhase) private var phase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    #if os(macOS)
+    @Environment(\.openSettings) private var openSettings
+    @Environment(\.openWindow) private var openWindow
+    #endif
     private var motion: Bool { model.interfaceMotionEnabled && !reduceMotion }
     init(model: VerseModel) {
         self.model = model
@@ -37,18 +40,27 @@ struct ContentView: View {
         #endif
     }
     var body: some View {
+        #if os(macOS)
+        listeningView
+        #else
+        NavigationStack {
+            listeningView.navigationBarTitleDisplayMode(.inline)
+                .toolbarColorScheme(.dark, for: .navigationBar)
+        }
+        #endif
+    }
+    private var listeningView: some View {
         GeometryReader { geometry in
             let wide = geometry.size.width >= 760 && geometry.size.height >= 540
             let coverSize = min(260.0, max(210.0, min(1100, geometry.size.width) * 0.29))
             VStack(spacing: 0) {
-                header.padding(.horizontal, wide ? 34 : 24).padding(.top, 14).padding(.bottom, 10)
                 if wide {
-                    HStack(spacing: 46) {
+                    HStack(spacing: 52) {
                         albumPanel(size: coverSize).frame(width: coverSize)
                         lyricsBody(wide: true)
-                    }.padding(.horizontal, 38).padding(.top, 18)
+                    }.padding(.horizontal, 40).padding(.top, 26)
                 } else {
-                    trackHeader.padding(.horizontal, 28).padding(.top, 14).padding(.bottom, 16)
+                    trackHeader.padding(.horizontal, 28).padding(.top, 22).padding(.bottom, 20)
                     lyricsBody(wide: false)
                 }
                 footer.padding(.horizontal, wide ? 38 : 28).padding(.top, 14).padding(.bottom, 20)
@@ -69,7 +81,17 @@ struct ContentView: View {
         .opacity(appeared ? 1 : 0)
         .offset(y: appeared || !motion ? 0 : 5)
         .modifier(LyricTranslationHost(model: model))
-        .sheet(isPresented: $settings) { SettingsView(model: model, initialCategory: settingsCategory) }
+        .navigationTitle("VerseDock")
+        .toolbar {
+            ToolbarItemGroup(placement: .primaryAction) {
+                moreMenu
+                Button { showSettings(.appearance) } label: { Label("设置", systemImage: "gearshape") }
+                    .help("设置").accessibilityLabel("设置")
+            }
+        }
+        #if os(iOS)
+        .sheet(isPresented: $settings) { SettingsView(model: model) }
+        #endif
         .fileImporter(isPresented: $importing, allowedContentTypes: [.plainText, UTType(filenameExtension: "lrc") ?? .data]) { result in
             switch result {
             case .success(let url): model.importLyrics(url)
@@ -80,39 +102,34 @@ struct ContentView: View {
             Button("知道了", role: .cancel) { model.notice = "" }
         } message: { Text(model.notice) }
         .task { model.start() }
-        .onAppear { withAnimation(motion ? .easeOut(duration: 0.35) : nil) { appeared = true } }
+        .onAppear {
+            #if os(macOS)
+            model.presentMainWindow = { openWindow(id: "main") }
+            #endif
+            withAnimation(motion ? .easeOut(duration: 0.35) : nil) { appeared = true }
+        }
         .onChange(of: model.snapshot?.track.id) { _, _ in follow = true }
         #if os(iOS)
         .onChange(of: phase) { _, value in model.setForeground(value == .active) }
         #endif
     }
-    private var header: some View {
-        HStack(spacing: 10) {
-            brandMark.resizable().scaledToFit().frame(width: 22, height: 22)
-                .clipShape(RoundedRectangle(cornerRadius: 6)).accessibilityHidden(true)
-            Text("VerseDock").font(.system(size: 13, weight: .semibold)).tracking(-0.2)
-                .foregroundStyle(.white.opacity(0.76))
-            Spacer()
-            HStack(spacing: 0) {
-                Menu {
-                    Button("重新查找歌词", systemImage: "arrow.clockwise") { model.retryLyrics() }
-                        .disabled(model.snapshot == nil || model.loadingLyrics)
-                    Button("导入 LRC 歌词", systemImage: "square.and.arrow.down") { importing = true }
-                } label: { Image(systemName: "ellipsis").frame(width: 18) }
-                    #if os(macOS)
-                    .menuStyle(.borderlessButton)
-                    #endif
-                    .menuIndicator(.hidden)
-                    .accessibilityLabel("更多操作").help("重新查找或导入歌词")
-                Rectangle().fill(.white.opacity(0.1)).frame(width: 0.5, height: 13)
-                Button { settingsCategory = .appearance; settings = true } label: { Image(systemName: "gearshape").frame(width: 18) }
-                    .keyboardShortcut(",", modifiers: .command)
-                    .help("设置").accessibilityLabel("设置")
-            }
-            .buttonStyle(VerseQuietStyle())
-            .padding(3)
-            .modifier(VerseGlassSurface(cornerRadius: 19, scrim: 0.08))
-        }
+    private func showSettings(_ section: VerseSettingsSection) {
+        model.settingsSection = section
+        #if os(macOS)
+        openSettings()
+        #else
+        settings = true
+        #endif
+    }
+    private var moreMenu: some View {
+        Menu {
+            Button("重新查找歌词", systemImage: "arrow.clockwise") { model.retryLyrics() }
+                .disabled(model.snapshot == nil || model.loadingLyrics)
+            Button("导入 LRC 歌词", systemImage: "square.and.arrow.down") { importing = true }
+            Divider()
+            if !model.isDemo { Button("试用原创演示", systemImage: "play.circle") { model.demo() } }
+        } label: { Label("更多操作", systemImage: "ellipsis") }
+        .help("重新查找或导入歌词").accessibilityLabel("更多操作")
     }
     private var trackHeader: some View {
         HStack(spacing: 18) {
@@ -159,8 +176,8 @@ struct ContentView: View {
     }
     private var lyricsHeader: some View {
         HStack {
-            Text("歌词").font(.system(size: 10, weight: .medium)).tracking(2)
-                .foregroundStyle(.white.opacity(0.3))
+            Text("歌词").font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.5))
             Spacer()
             Button { follow.toggle() } label: {
                 Label(follow ? "跟随中" : "自由浏览", systemImage: follow ? "location.fill" : "hand.draw")
@@ -248,11 +265,10 @@ struct ContentView: View {
                     else {
                         Button("打开设置") {
                             #if os(iOS)
-                            settingsCategory = .connection
+                            showSettings(.connection)
                             #else
-                            settingsCategory = .lyrics
+                            showSettings(.lyrics)
                             #endif
-                            settings = true
                         }
                     }
                 }.buttonStyle(VerseControlStyle()).padding(.top, 5)
@@ -289,29 +305,32 @@ struct ContentView: View {
                 }
                 .help(model.lyricsStatus).accessibilityLabel("歌词来源与状态")
                 .popover(isPresented: $sourceDetails) { sourcePopover.presentationCompactAdaptation(.popover) }
-                Spacer(minLength: 4)
-                Button { calibration.toggle() } label: {
-                    HStack(spacing: 5) {
-                        Image(systemName: "timer")
-                        if abs(model.adjustment) >= 0.05 { Text(String(format: "%+.1fs", model.adjustment)).monospacedDigit() }
-                    }.foregroundStyle(.white.opacity(0.65))
+                Spacer(minLength: 12)
+                HStack(spacing: 0) {
+                    Button { calibration.toggle() } label: {
+                        HStack(spacing: 5) {
+                            Image(systemName: "timer")
+                            if abs(model.adjustment) >= 0.05 { Text(String(format: "%+.1fs", model.adjustment)).monospacedDigit() }
+                        }.foregroundStyle(.white.opacity(0.65))
+                    }
+                    .help("歌词时间校准").accessibilityLabel("歌词时间校准")
+                    .popover(isPresented: $calibration) { calibrationPopover.presentationCompactAdaptation(.popover) }
+                    #if os(macOS)
+                    Rectangle().fill(.white.opacity(0.08)).frame(width: 0.5, height: 14)
+                    Button { model.toggleOverlay() } label: {
+                        Image(systemName: "rectangle.on.rectangle")
+                            .foregroundStyle(model.overlayVisible ? VerseTheme.accent : .white.opacity(0.65))
+                    }
+                        .help(model.overlayVisible ? "隐藏悬浮歌词" : "显示悬浮歌词")
+                        .accessibilityLabel(model.overlayVisible ? "隐藏悬浮歌词" : "悬浮歌词")
+                    #else
+                    ActivityButton(model: model, controller: model.liveActivity)
+                    #endif
                 }
-                .help("歌词时间校准").accessibilityLabel("歌词时间校准")
-                .popover(isPresented: $calibration) { calibrationPopover.presentationCompactAdaptation(.popover) }
-                #if os(macOS)
-                Rectangle().fill(.white.opacity(0.08)).frame(width: 0.5, height: 14)
-                Button { model.toggleOverlay() } label: {
-                    Image(systemName: "rectangle.on.rectangle")
-                        .foregroundStyle(model.overlayVisible ? VerseTheme.accent : .white.opacity(0.65))
-                }
-                    .help(model.overlayVisible ? "隐藏悬浮歌词" : "显示悬浮歌词")
-                    .accessibilityLabel(model.overlayVisible ? "隐藏悬浮歌词" : "悬浮歌词")
-                #else
-                ActivityButton(model: model, controller: model.liveActivity)
-                #endif
+                .padding(3)
+                .modifier(VerseGlassSurface(cornerRadius: 18))
             }
-            .buttonStyle(VerseQuietStyle()).padding(5)
-            .modifier(VerseGlassSurface(cornerRadius: 19, scrim: 0.1))
+            .buttonStyle(VerseQuietStyle())
             if model.isDemo {
                 HStack {
                     Text("演示 · 原创歌词").foregroundStyle(.white.opacity(0.3))
@@ -334,7 +353,7 @@ struct ContentView: View {
                 if let link = model.snapshot?.track.spotifyURL { Link("在 Spotify 打开 ↗", destination: link) }
             }.font(.system(size: 11))
             Divider()
-            Button("设置歌词来源与翻译") { sourceDetails = false; settingsCategory = .lyrics; settings = true }.font(.system(size: 12))
+            Button("设置歌词来源与翻译") { sourceDetails = false; showSettings(.lyrics) }.font(.system(size: 12))
             if !model.isDemo { Button("试用原创演示") { sourceDetails = false; model.demo() }.font(.system(size: 11)) }
         }
         .padding(20).frame(width: 310, alignment: .leading)
@@ -362,27 +381,62 @@ struct ContentView: View {
 
 enum VerseSettingsSection: String, CaseIterable {
     case appearance = "外观", lyrics = "歌词", translation = "翻译", connection = "连接"
+    var symbol: String {
+        switch self {
+        case .appearance: "paintpalette"
+        case .lyrics: "quote.bubble"
+        case .translation: "character.bubble"
+        case .connection: "antenna.radiowaves.left.and.right"
+        }
+    }
 }
 
 struct SettingsView: View {
     @ObservedObject var model: VerseModel
     @ObservedObject private var spotifyLyrics = SpotifyLyricsSession.shared
     @State private var connectingLyrics = false
-    @State private var category = VerseSettingsSection.appearance
+    @State private var path: [VerseSettingsSection]
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
-    init(model: VerseModel, initialCategory: VerseSettingsSection = .appearance) {
+    init(model: VerseModel) {
         self.model = model
-        self._category = State(initialValue: initialCategory)
+        self._path = State(initialValue: [model.settingsSection])
     }
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-            Picker("设置分类", selection: $category) {
-                ForEach(VerseSettingsSection.allCases, id: \.self) { section in Text(section.rawValue).tag(section) }
-            }.pickerStyle(.segmented).labelsHidden().padding(.horizontal, 22).padding(.top, 6).padding(.bottom, 12)
-                .accessibilityIdentifier("settings-category")
+        Group {
+            #if os(macOS)
+            TabView(selection: $model.settingsSection) {
+                ForEach(VerseSettingsSection.allCases, id: \.self) { section in
+                    settingsForm(section)
+                        .tabItem { Label(section.rawValue, systemImage: section.symbol) }
+                        .tag(section)
+                }
+            }
+            .frame(width: 620, height: 680)
+            .onDisappear { model.saveSettings() }
+            #else
+            NavigationStack(path: $path) {
+                List(VerseSettingsSection.allCases, id: \.self) { section in
+                    NavigationLink(value: section) { Label(section.rawValue, systemImage: section.symbol) }
+                }
+                .navigationTitle("设置")
+                .navigationDestination(for: VerseSettingsSection.self) { settingsForm($0).navigationTitle($0.rawValue) }
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("完成") { model.saveSettings(); dismiss() }.accessibilityLabel("保存设置")
+                    }
+                }
+            }
+            #endif
+        }
+        .preferredColorScheme(nil)
+        #if os(iOS)
+        .tint(.blue)
+        #endif
+        .sheet(isPresented: $connectingLyrics) { SpotifyLyricsConnectionView() }
+    }
+    private func settingsForm(_ category: VerseSettingsSection) -> some View {
             Form {
                 if category == .appearance {
                 Section("外观与交互") {
@@ -438,7 +492,6 @@ struct SettingsView: View {
                     Toggle("优先使用 Spotify 原词", isOn: $model.preferSpotifyLyrics).disabled(!model.onlineLyrics)
                     Button("连接 / 查看 Spotify 原词会话") {
                         #if os(macOS)
-                        dismiss()
                         DispatchQueue.main.async { SpotifyLyricsWindowController.shared.show() }
                         #else
                         connectingLyrics = true
@@ -521,9 +574,10 @@ struct SettingsView: View {
                     Text("两端填写同一服务地址和配对密钥。服务需配置 Apple APNs 签名密钥；私钥只留在服务端。Mac 持续运行时，每次发送当前歌词给该服务。配置后重新启动实时活动。")
                         .font(.caption).foregroundStyle(.secondary)
                     Text(model.relayStatus).font(.caption).foregroundStyle(.secondary)
+                    Button("保存连接设置") { model.saveSettings() }
                 }
                 Section("关于") {
-                    Text("VerseDock 0.1.7 · 原创原生实现")
+                    Text("VerseDock 0.1.8 · 原创原生实现")
                     Text("独立 Spotify 歌词伴侣。应用代码从零编写，无第三方歌词插件或 Spotify 客户端补丁。歌词内容归其权利人所有。")
                         .font(.caption).foregroundStyle(.secondary)
                 }
@@ -531,15 +585,6 @@ struct SettingsView: View {
             }
             .formStyle(.grouped)
             .id(category)
-            }
-            .navigationTitle("设置")
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { model.saveSettings(); dismiss() }.accessibilityLabel("保存设置") } }
-        }
-        .preferredColorScheme(.dark).tint(VerseTheme.accent)
-        .sheet(isPresented: $connectingLyrics) { SpotifyLyricsConnectionView() }
-        #if os(macOS)
-        .frame(width: 600, height: 680)
-        #endif
     }
 }
 
@@ -549,7 +594,7 @@ private struct VerseAppearancePreview: View {
     var body: some View {
         ZStack {
             VerseListeningBackground(palette: appearance.palette, strength: model.albumBackgroundStrength,
-                enabled: model.albumBackgroundEnabled, flowing: model.albumFlowEnabled)
+                enabled: model.albumBackgroundEnabled, flowing: model.albumFlowEnabled, usesWindowBackdrop: false)
             VStack(spacing: 13) {
                 HStack(spacing: 13) {
                     VerseArtwork(url: model.snapshot?.track.artworkURL, size: 48)
@@ -568,6 +613,7 @@ private struct VerseAppearancePreview: View {
             }.padding(.horizontal, 22)
         }
         .frame(height: 162).clipShape(RoundedRectangle(cornerRadius: 22))
+        .environment(\.colorScheme, .dark)
         .environment(\.verseMotionEnabled, model.interfaceMotionEnabled)
         .environment(\.verseGlassStrength, model.glassStrength)
         .environment(\.verseGlassColor, model.albumBackgroundEnabled ? appearance.palette.tint : VerseAlbumPalette.neutral.tint)

@@ -131,6 +131,8 @@ import VerseCore
         guard let model else { return }
         if let window = NSApp.windows.first(where: { $0.title == "VerseDock" }) {
             window.makeKeyAndOrderFront(nil)
+        } else if let present = model.presentMainWindow {
+            present()
         } else {
             let window = fallbackWindow ?? NSWindow(contentRect: NSRect(x: 0, y: 0, width: 480, height: 740),
                 styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView], backing: .buffered, defer: false)

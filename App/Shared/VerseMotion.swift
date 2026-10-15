@@ -28,7 +28,6 @@ struct VerseGlassSurface: ViewModifier {
     var cornerRadius: CGFloat = 18
     var tint: Color? = nil
     var interactive = true
-    var scrim = 0.12
     @Environment(\.verseMotionEnabled) private var motion
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
@@ -40,10 +39,9 @@ struct VerseGlassSurface: ViewModifier {
                 .overlay(RoundedRectangle(cornerRadius: cornerRadius).strokeBorder(.white.opacity(0.18), lineWidth: 0.7))
         } else if #available(macOS 26.0, iOS 26.0, *) {
             content.glassEffect((strength < 0.12 ? Glass.clear : Glass.regular)
-                                .tint((tint ?? albumColor).opacity(strength * 0.7))
+                                .tint((tint ?? albumColor).opacity(strength * strength * 0.7))
                                 .interactive(interactive && motion && !reduceMotion),
                                 in: RoundedRectangle(cornerRadius: cornerRadius))
-                .background(.black.opacity(scrim), in: RoundedRectangle(cornerRadius: cornerRadius))
         } else {
             content.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: cornerRadius))
                 .background((tint ?? albumColor).opacity(strength * 0.45), in: RoundedRectangle(cornerRadius: cornerRadius))
@@ -66,6 +64,7 @@ struct VerseListeningBackground: View {
     var strength = 0.65
     var enabled = true
     var flowing = true
+    var usesWindowBackdrop = true
     @Environment(\.verseMotionEnabled) private var motion
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
@@ -73,7 +72,7 @@ struct VerseListeningBackground: View {
     var body: some View {
         ZStack {
                 #if os(macOS)
-                if !reduceTransparency { VerseWindowBackdrop() }
+                if usesWindowBackdrop && !reduceTransparency { VerseWindowBackdrop() }
                 #endif
                 VerseTheme.ink
                 if !reduceTransparency, enabled, strength > 0 {
@@ -104,7 +103,6 @@ private struct VerseWindowBackdrop: NSViewRepresentable {
             super.viewDidMoveToWindow()
             window?.isOpaque = false
             window?.backgroundColor = NSColor(calibratedRed: 0.065, green: 0.068, blue: 0.064, alpha: 1)
-            window?.appearance = NSAppearance(named: .darkAqua)
             window?.titlebarAppearsTransparent = true
         }
     }
@@ -224,8 +222,7 @@ struct VerseArtwork: View {
         }
         .frame(width: size, height: size)
         .shadow(color: .black.opacity(0.28), radius: size * 0.09, y: size * 0.055)
-        .rotation3DEffect(.degrees(hovered && motion && !reduceMotion ? 3 : 0), axis: (x: -0.3, y: 1, z: 0))
-        .scaleEffect(hovered && motion && !reduceMotion ? 1.015 : 1)
+        .scaleEffect(hovered && motion && !reduceMotion ? 1.01 : 1)
         .animation(motion && !reduceMotion ? .spring(duration: 0.4, bounce: 0.15) : nil, value: hovered)
         .onHover { hovered = $0 }
         .accessibilityHidden(true)

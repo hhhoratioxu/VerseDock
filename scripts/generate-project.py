@@ -66,7 +66,7 @@ def dependency(name, target):
 
 common = {'SWIFT_VERSION': '5.0', 'CLANG_ENABLE_MODULES': 'YES', 'CODE_SIGN_STYLE': 'Automatic',
           'MACOSX_DEPLOYMENT_TARGET': '14.0', 'IPHONEOS_DEPLOYMENT_TARGET': '17.0',
-          'MARKETING_VERSION': '0.1.7', 'CURRENT_PROJECT_VERSION': '8'}
+          'MARKETING_VERSION': '0.1.8', 'CURRENT_PROJECT_VERSION': '9'}
 core = [p for p in all_files if p.startswith('Sources/') and p.endswith('.swift')]
 shared = [p for p in all_files if p.startswith('App/Shared/') and p.endswith('.swift')]
 mac = [p for p in all_files if p.startswith('App/macOS/') and p.endswith('.swift')]

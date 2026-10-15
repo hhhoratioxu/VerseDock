@@ -112,7 +112,7 @@ struct OverlayView: View {
         }
         .padding(.horizontal, 22).padding(.vertical, 16)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .modifier(VerseGlassSurface(cornerRadius: 22, interactive: false, scrim: 0.28))
+        .modifier(VerseGlassSurface(cornerRadius: 22, interactive: false))
         .environment(\.verseMotionEnabled, model.interfaceMotionEnabled)
         .environment(\.verseGlassStrength, model.glassStrength)
         .environment(\.verseGlassColor, model.albumBackgroundEnabled ? appearance.palette.tint : VerseAlbumPalette.neutral.tint)

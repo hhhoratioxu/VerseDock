@@ -9,7 +9,11 @@ import SwiftUI
         #if os(macOS)
         WindowGroup("VerseDock", id: "main") {
             ContentView(model: model).frame(minWidth: 400, minHeight: 580)
-        }.defaultSize(width: 900, height: 660).windowStyle(.hiddenTitleBar)
+        }
+        .defaultSize(width: 900, height: 660)
+        .windowStyle(.titleBar)
+        .windowToolbarStyle(.unifiedCompact)
+        Settings { SettingsView(model: model) }
         #else
         WindowGroup { ContentView(model: model) }
         #endif
