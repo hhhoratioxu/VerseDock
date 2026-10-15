@@ -10,9 +10,9 @@
 
 GitHub 仓库：[hhhoratioxu/VerseDock](https://github.com/hhhoratioxu/VerseDock)。打包的 Mac App 在 [Releases](https://github.com/hhhoratioxu/VerseDock/releases) 中提供；源码、Xcode 工程和安装说明直接保存在仓库内。
 
-当前版本为 [v0.1.8-apple-style](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.8-apple-style)：按 Apple 原生交互改版，使用系统工具栏、Mac 独立设置窗口及 iOS 分类导航；取消整窗宽玻璃条，使用更克制的中性控件和留白。保留随封面变化的流动背景和可调玻璃强度。保留已在本机验证的 Spotify 原词优先、无词备用、点击跳转、Dock 与状态栏入口。原创图标见 [Artwork](Artwork/README.md)。
+当前版本为 [v0.1.9-apple-style](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.9-apple-style)：按 Apple 原生交互改版，使用系统工具栏、Mac 独立设置窗口及 iOS 分类导航；取消整窗宽玻璃条，使用更克制的中性控件和留白。保留随封面变化的流动背景和可调玻璃强度。保留已在本机验证的 Spotify 原词优先、无词备用、点击跳转、Dock 与状态栏入口。原创图标见 [Artwork](Artwork/README.md)。
 
-0.1.8 两端构建通过，Mac 候选包签名检查通过；当前本机锁屏，新版尚未启动及完成窗口、工具栏和设置交互复查。已安装的旧运行副本保留，详见 [验收记录](docs/VERIFICATION.zh-CN.md)。
+0.1.9 修正默认封面放大后发虚，Mac 与 iOS 均复用项目原有的 1024 像素图标。两端构建通过，Mac 已在本机安装并完成主窗口、四页设置、快捷键、上下双语与玻璃强度的实际检查；最后的系统窗口缩放与恢复检查仍受界面工具菜单定位问题影响。详见 [验收记录](docs/VERIFICATION.zh-CN.md)。
 
 下载 `VerseDock-macOS-arm64.zip` 并解压，将 `VerseDock.app` 放进“应用程序”后双击。运行时显示 Dock 图标，点击 Dock 可重新打开歌词主窗口；关闭主窗口后状态栏歌词仍然继续。本地自行构建的产物位于 `build/VerseDock.app`，也可以在项目目录执行：
 
@@ -73,7 +73,7 @@ macOS 26 / iOS、iPadOS 26 及以上使用系统原生 Liquid Glass：顶部工�
 
 ## iPhone/iPad 构建与灵动岛
 
-已经提供 [iPhone/iPad 待签名 IPA](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.8-apple-style)。下载 `VerseDock-iOS-unsigned.ipa`，使用自己的 Apple 签名身份重新签名安装。包内保留灵动岛/锁屏扩展，最低 iOS/iPadOS 17；本次已完成标准 Xcode 设备构建，但尚未签名或真机验收。详细说明见 [docs/IPA.zh-CN.md](docs/IPA.zh-CN.md)。
+已经提供 [iPhone/iPad 待签名 IPA](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.9-apple-style)。下载 `VerseDock-iOS-unsigned.ipa`，使用自己的 Apple 签名身份重新签名安装。包内保留灵动岛/锁屏扩展，最低 iOS/iPadOS 17；本次已完成标准 Xcode 设备构建，但尚未签名或真机验收。详细说明见 [docs/IPA.zh-CN.md](docs/IPA.zh-CN.md)。
 
 打开 `VerseDock.xcodeproj`，选择 `VerseDock` scheme。选择你的 Apple 开发者 Team 和设备。部署目标 iOS/iPadOS 17；灵动岛要求具备相应硬件的 iPhone。开启 App 中的实时活动按钮后，系统管理灵动岛和锁屏显示。
 

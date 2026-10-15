@@ -1,0 +1,97 @@
+{
+  "date": "2026-10-15",
+  "appVersion": "0.1.9 (10)",
+  "originalImplementation": true,
+  "changesSince018": [
+    "reuse existing original 1024-pixel artwork in Mac and iOS BrandMark resources",
+    "version and delivery records"
+  ],
+  "layoutOrLyricPolicyChangedSince018": false,
+  "builds": {
+    "macOSarm64": "final optimized build passed",
+    "installedAndPackageStrictSignature": "passed",
+    "installedBinaryMatchesPackage": true,
+    "iOSAppAndWidget": "Release device build passed, unsigned"
+  },
+  "finalMacRuntime": {
+    "installed": true,
+    "launched": true,
+    "wideWindow": {
+      "width": 900,
+      "height": 660,
+      "visuallyInspected": true
+    },
+    "systemToolbar": true,
+    "allFourSettingsTabs": true,
+    "settingsKeyboardShortcut": true,
+    "systemEnglishTranslationVisible": true,
+    "activeLyricCenteringObserved": true,
+    "glassMinimumAndMaximumVisuallyChecked": true,
+    "glassRestoredTo": 0.4,
+    "sharpFallbackArtworkObserved": true,
+    "appVersionVisibleInSettings": "0.1.9"
+  },
+  "companion018Runtime": {
+    "compactWindow": {
+      "width": 480,
+      "height": 740
+    },
+    "appEntryAfterMainWindowClosed": "new SwiftUI main-AppWindow-2 with native toolbar observed",
+    "contextualSourceSettingsEntry": true,
+    "originalDemoSeekSeconds": [
+      10,
+      5
+    ],
+    "floatingLyricsAndTranslationShown": true,
+    "floatingHiddenViaContextMenu": true
+  },
+  "spotifyRuntime": {
+    "originalLyricsRestoredAfterRestart": true,
+    "provider": "Musixmatch",
+    "playbackChangedByAgent": false,
+    "observedState": "paused",
+    "observedPositionSeconds": 42,
+    "observedDurationSeconds": 263
+  },
+  "preservedPreferences": {
+    "glassStrength": 0.4,
+    "albumBackgroundStrength": 0.65,
+    "albumBackgroundEnabled": true,
+    "albumFlowEnabled": true,
+    "interfaceMotionEnabled": true,
+    "translationEnabled": true,
+    "translationTarget": "English",
+    "menuCharacters": 18,
+    "menuScrolling": false,
+    "overlayFont": 28,
+    "overlayVisible": false,
+    "relayEnabled": false
+  },
+  "pendingFinalChecks": [
+    "compact window and main-window reopen in 0.1.9",
+    "close system Window menu after UI-tool targeting failure",
+    "return from demo to real Spotify"
+  ],
+  "validationLimits": {
+    "iOSPhysicalDevice": false,
+    "APNsDelivery": false,
+    "olderOSFallbackRuntime": false,
+    "systemLightAppearanceRuntime": false,
+    "systemAccessibilityRuntime": false,
+    "literalDockIconClick": false,
+    "floatingDragRepeated": false
+  },
+  "localScreenshots": [
+    {
+      "file": "ui-apple-wide-0.1.9.png",
+      "bytes": 174677,
+      "sha256": "450cd021ecf21e53d6b9a7973285eec7dad2173b86833ef07f6ee05dba7e513a"
+    },
+    {
+      "file": "ui-apple-settings-0.1.9.png",
+      "bytes": 141158,
+      "sha256": "3d933f7c43a66f52c492380ebfee49340aa21ade3846991a5f2c6c9f5b14d60e"
+    }
+  ],
+  "privacy": "Only original demo lyrics and ordinary settings in local screenshots; no commercial lyrics, album files, credentials, cookies, account profiles or signing materials included."
+}
