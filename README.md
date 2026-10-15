@@ -37,6 +37,8 @@ Mac 本地读取无需 Spotify Client ID。当前包为 arm64、最低 macOS 14�
 
 ## iPhone/iPad 构建与灵动岛
 
+已经提供 [iPhone/iPad 待签名 IPA](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.0-unsigned-ipa)。下载 `VerseDock-iOS-unsigned.ipa`，使用自己的 Apple 签名身份重新签名安装。包内保留灵动岛/锁屏扩展，最低 iOS/iPadOS 17；本次已完成标准 Xcode 设备构建，但尚未签名或真机验收。详细说明见 [docs/IPA.zh-CN.md](docs/IPA.zh-CN.md)。
+
 打开 `VerseDock.xcodeproj`，选择 `VerseDock` scheme。选择你的 Apple 开发者 Team 和设备。部署目标 iOS/iPadOS 17；灵动岛要求具备相应硬件的 iPhone。开启 App 中的实时活动按钮后，系统管理灵动岛和锁屏显示。
 
 前台可以更新歌词；App 进入后台后，普通计时器不再可靠运行。因此工程提供 `relay/` 后台推送桥：
@@ -66,6 +68,9 @@ zsh scripts/build-mac.sh
 # 检查 iOS 主 App 和实时活动扩展的源码类型
 zsh scripts/check-ios.sh
 
+# 完整构建 iPhone/iPad 设备版本，打包待签名 IPA
+zsh scripts/build-ios-unsigned.sh
+
 # 运行原创核心的 XCTest 测试
 zsh scripts/test-core.sh
 
@@ -77,6 +82,6 @@ cd relay
 .venv/bin/python -m unittest -v test_server.py
 ```
 
-本机 Xcode 27 尚未接受许可，且 CoreSimulator 工具缺失，标准 `xcodebuild` 和模拟器验收被阻断。为保留可检查的交付，脚本直接调用已安装的 Swift 编译器和 SDK：Mac App 已编译并实际打开；iOS 只完成类型检查，不等同完整构建、真机安装或 APNs 送达。
+2026-10-13 的首次交付完成了 Mac 构建和 iOS 类型检查，当时标准 Xcode 构建受环境限制。2026-10-15 重新检查后，Xcode 许可检查通过，iOS 主 App 与实时活动扩展已使用标准 `xcodebuild` 完整编译，并打包为待签名 IPA。本机没有可用的 Apple 签名证书，尚未安装到 iPhone/iPad，也未验证真机灵动岛和 APNs 送达。
 
 详见 [docs/VERIFICATION.zh-CN.md](docs/VERIFICATION.zh-CN.md)，其中明确记录当前证据与未完成的真机验收。

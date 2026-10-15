@@ -1,0 +1,58 @@
+{
+  "checkedOn": "2026-10-15",
+  "xcode": "Xcode 27.0\nBuild version 27A266a",
+  "build": "BUILD SUCCEEDED",
+  "configuration": "Release",
+  "destination": "generic/platform=iOS",
+  "sdk": "iphoneos",
+  "codeSigningAllowed": false,
+  "validSigningIdentities": 0,
+  "applicationSourceBaseline": "540a6c6821a21cd2c7f60d68971c9a0fa9d06c3b",
+  "artifact": "VerseDock-iOS-unsigned.ipa",
+  "bytes": 301074,
+  "sha256": "623b65c52b15ecb06004cb2c025da5f35fff3fb3c7e52c927f757578efa046f6",
+  "signed": false,
+  "provisioningProfileIncluded": false,
+  "deviceTested": false,
+  "liveActivityExtensionIncluded": true,
+  "bundles": [
+    {
+      "bundle": ".",
+      "identifier": "com.horatio.versedock",
+      "executable": "VerseDock",
+      "appVersion": "0.1.0",
+      "buildNumber": "1",
+      "minimumOS": "17.0",
+      "deviceFamilies": [
+        1,
+        2
+      ],
+      "sha256": "aa258235d678edaf20c4dc13afa5fdbab341761768307d538dad7ca60c51074c",
+      "machO": {
+        "architecture": "arm64",
+        "platform": "iOS",
+        "minimumOS": "17.0.0",
+        "sdk": "27.0.0"
+      }
+    },
+    {
+      "bundle": "PlugIns/VerseDockActivity.appex",
+      "identifier": "com.horatio.versedock.activity",
+      "executable": "VerseDockActivity",
+      "appVersion": "0.1.0",
+      "buildNumber": "1",
+      "minimumOS": "17.0",
+      "deviceFamilies": [
+        1,
+        2
+      ],
+      "sha256": "173589c991f371616542f0a03e84c9d3dc340132d9a1ce4cca0b31fe83da0b31",
+      "machO": {
+        "architecture": "arm64",
+        "platform": "iOS",
+        "minimumOS": "17.0.0",
+        "sdk": "27.0.0"
+      }
+    }
+  ]
+}

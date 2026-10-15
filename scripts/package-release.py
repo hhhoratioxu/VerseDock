@@ -39,7 +39,11 @@ source_zip = DIST / 'VerseDock-Source.zip'
 write_archive(source_zip, source_files, 'VerseDock/', ROOT)
 
 manifest = {}
-for path in (app_zip, source_zip):
+artifacts = [app_zip, source_zip]
+ios_ipa = DIST / 'VerseDock-iOS-unsigned.ipa'
+if ios_ipa.is_file():
+    artifacts.append(ios_ipa)
+for path in artifacts:
     manifest[path.name] = {'bytes': path.stat().st_size, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
 (DIST / 'SHA256.json').write_text(json.dumps(manifest, indent=2) + '\n')
 for name, value in manifest.items(): print(f"{name}: {value['bytes']} bytes, SHA256 {value['sha256']}")
