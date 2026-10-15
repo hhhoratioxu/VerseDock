@@ -1,0 +1,92 @@
+{
+  "date": "2026-10-15",
+  "appVersion": "0.1.5 (6)",
+  "implementation": {
+    "originalUIImplementation": true,
+    "thirdPartyUIPackages": false,
+    "nativeGlassAPIs": [
+      "glassEffect",
+      "GlassEffectContainer"
+    ],
+    "nativeGlassMinimumOS": {
+      "macOS": "26",
+      "iOS": "26",
+      "iPadOS": "26"
+    },
+    "olderOSMaterialFallback": true,
+    "reduceMotionAndTransparencyImplemented": true,
+    "systemAccessibilityPreferencesChangedByAgent": false
+  },
+  "macRuntime": {
+    "installedCopyLaunched": true,
+    "strictSignatureVerified": true,
+    "nativeGlassSettingsLabelObserved": true,
+    "glassControlsVisuallyInspected": true,
+    "darkTitlebarVisuallyInspected": true,
+    "sourcePopoverOpened": true,
+    "calibrationPopoverOpenedWithoutChangingOffset": true,
+    "settingsSavedWithoutUnrelatedKeychainAlert": true,
+    "motionOffSurvivedRestart": true,
+    "motionOnSurvivedRestart": true,
+    "originalDemo": {
+      "actualRunningApp": true,
+      "notRealSpotifyAudio": true,
+      "activeRowsObservedAtSeconds": [
+        0,
+        5,
+        15,
+        30
+      ],
+      "progressAndFollowObserved": true,
+      "replayButtonUsed": true,
+      "systemEnglishTranslationDisplayed": true,
+      "actualScreenshotRetainedLocally": "build/ui-liquid-glass-0.1.5.png"
+    },
+    "floatingWindow": {
+      "nativeGlassOpened": true,
+      "lyricChangesObserved": true,
+      "translationAboveBelowObserved": true,
+      "hiddenAgainUsingContextMenu": true,
+      "dragBehaviorPreservedInCode": true,
+      "dragRetestedThisRelease": false
+    },
+    "realSpotifyAfterPreview": {
+      "track": "那页夏天",
+      "artist": "王俊凱",
+      "trackID": "76XUZSb13QUuj1HECY4Hvo",
+      "playbackState": "paused",
+      "observedProgress": "1:14 / 4:06",
+      "source": "QQ 音乐",
+      "settingsAttemptsObserved": [
+        "Spotify: no lyrics",
+        "LRCLIB: no match",
+        "QQ 音乐: synchronized lyrics acquired"
+      ],
+      "agentDidNotChangeActualSpotifyPlaybackForUIPreview": true
+    },
+    "preservedPreferences": {
+      "preferSpotifyOriginalLyrics": true,
+      "backupProvider": "automatic",
+      "translationEnabled": true,
+      "translationTarget": "English",
+      "menuCharacters": 18,
+      "menuScrolling": false,
+      "overlayVisible": false,
+      "overlayFont": 28,
+      "interfaceMotionEnabled": true
+    }
+  },
+  "builds": {
+    "macOSarm64": "passed, optimized, minimum macOS 14",
+    "iOSDeviceAppAndWidget": "standard Release device build passed, unsigned, minimum iOS 17"
+  },
+  "validationLimits": {
+    "iOSPhysicalDeviceUI": false,
+    "APNsDelivery": false,
+    "olderOSFallbackRuntime": false,
+    "systemReduceMotionAndTransparencyRuntimeTogglesTested": false,
+    "realSpotifyOriginalLyricsThisRelease": "not repeated; prior 0.1.4 real-account evidence retained",
+    "coreAndBridgeTests": "prior 0.1.3 execution retained; no lyric policy changes in this UI release"
+  },
+  "privacy": "No commercial lyric bodies, credentials, cookies, account profiles, authorization headers or signing material included."
+}

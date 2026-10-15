@@ -116,6 +116,9 @@ import AppKit
     @Published var menuScrolling = UserDefaults.standard.object(forKey: "menuScrolling") as? Bool ?? false {
         didSet { UserDefaults.standard.set(menuScrolling, forKey: "menuScrolling") }
     }
+    @Published var interfaceMotionEnabled = UserDefaults.standard.object(forKey: "interfaceMotionEnabled") as? Bool ?? true {
+        didSet { UserDefaults.standard.set(interfaceMotionEnabled, forKey: "interfaceMotionEnabled") }
+    }
     @Published private(set) var menuText = "VerseDock"
     @Published private(set) var menuTranslation = ""
     @Published var overlayFont: Double = UserDefaults.standard.double(forKey: "overlayFont") == 0 ? 26 : UserDefaults.standard.double(forKey: "overlayFont")
@@ -186,7 +189,8 @@ import AppKit
         #endif
     }
     private func tick() {
-        progress = snapshot?.progress(at: Date()) ?? 0
+        let nextProgress = snapshot?.progress(at: Date()) ?? 0
+        if progress != nextProgress { progress = nextProgress }
         let index = lyrics?.activeIndex(at: progress, adjustment: adjustment)
         if index != activeIndex { activeIndex = index }
         let line = currentLine

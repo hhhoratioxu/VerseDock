@@ -109,7 +109,7 @@ public actor LyricsClient {
         var request = URLRequest(url: parts.url!)
         request.timeoutInterval = timeout
         request.httpShouldHandleCookies = false
-        request.setValue("VerseDock/0.1.4 (https://github.com/hhhoratioxu/VerseDock)", forHTTPHeaderField: "User-Agent")
+        request.setValue("VerseDock/0.1.5 (https://github.com/hhhoratioxu/VerseDock)", forHTTPHeaderField: "User-Agent")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         if provider == .qqMusic { request.setValue("https://y.qq.com/", forHTTPHeaderField: "Referer") }
         if provider == .netEase { request.setValue("https://music.163.com/", forHTTPHeaderField: "Referer") }
