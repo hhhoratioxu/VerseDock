@@ -1,0 +1,76 @@
+{
+  "checkedOn": "2026-10-15",
+  "appVersion": "0.1.1",
+  "buildNumber": "2",
+  "assets": [
+    {
+      "file": "Artwork/VerseDock-Icon-1024.png",
+      "bytes": 987831,
+      "sha256": "dec111ff083dd13bc5d9f17ee875732e21e02ed255ed45dabd9de00e9229aed6",
+      "width": 1024,
+      "height": 1024,
+      "hasAlpha": false
+    },
+    {
+      "file": "App/Resources/AppIcon.icns",
+      "bytes": 1575527,
+      "sha256": "dc04cf7d37a6d41200171e19d2004feee26ccea76a034bd4ffcd71aa41a4d068"
+    },
+    {
+      "file": "App/Resources/BrandMark.png",
+      "bytes": 19559,
+      "sha256": "454881ccec0f7a8de56395826ed2c71454f06d31f77c1d51fc092df8a01e2d10",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false
+    },
+    {
+      "file": "App/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png",
+      "bytes": 987831,
+      "sha256": "dec111ff083dd13bc5d9f17ee875732e21e02ed255ed45dabd9de00e9229aed6",
+      "width": 1024,
+      "height": 1024,
+      "hasAlpha": false
+    },
+    {
+      "file": "App/Resources/Assets.xcassets/BrandMark.imageset/BrandMark.png",
+      "bytes": 19559,
+      "sha256": "454881ccec0f7a8de56395826ed2c71454f06d31f77c1d51fc092df8a01e2d10",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false
+    }
+  ],
+  "macOS": {
+    "arm64BuildPassed": true,
+    "appHeaderVisuallyChecked": true,
+    "bundleIconFile": "AppIcon",
+    "resourceBytesMatchSource": true,
+    "strictSignatureVerifiedFromExtractedZip": true,
+    "appleNotarized": false
+  },
+  "iOS": {
+    "deviceReleaseBuildPassed": true,
+    "phoneIcon": {
+      "CFBundleIconFiles": [
+        "AppIcon60x60"
+      ],
+      "CFBundleIconName": "AppIcon"
+    },
+    "padIcon": {
+      "CFBundleIconFiles": [
+        "AppIcon60x60",
+        "AppIcon76x76"
+      ],
+      "CFBundleIconName": "AppIcon"
+    },
+    "compiledIconFiles": [
+      "AppIcon60x60@2x.png",
+      "AppIcon76x76@2x~ipad.png"
+    ],
+    "compiledAssetCatalogIncluded": true,
+    "liveActivityExtensionIncluded": true,
+    "signed": false,
+    "deviceTested": false
+  }
+}

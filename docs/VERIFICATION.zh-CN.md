@@ -1,6 +1,17 @@
 # 当前验收记录
 
-最新检查日期：2026 年 10 月 15 日，Asia/Shanghai。先列出本次待签名 IPA 的新证据，随后保留 10 月 13 日首次交付记录。
+最新检查日期：2026 年 10 月 15 日，Asia/Shanghai。先列出图标更新和待签名 IPA 的新证据，随后保留 10 月 13 日首次交付记录。
+
+## 2026-10-15：0.1.1 图标更新
+
+| 项目 | 结果与证据 |
+|---|---|
+| 图标来源 | 使用内置 imagegen 生成 VerseDock 的 V 与歌词线图形，生成提示词与导出说明见 `Artwork/README.md`。没有下载或复用 Spotify 标志。 |
+| 主图与 iOS 资源 | 1024 × 1024、不透明 PNG；Xcode 设备构建已编译 AppIcon 和 BrandMark，iPhone 与 iPad 的 Info.plist 均引用 AppIcon。 |
+| Mac 资源与界面 | `.icns` 与 BrandMark 已进入应用 Resources；重新构建并打开 Mac App，实际看见窗口顶部的新 V 图形。 |
+| Mac 下载包 | 从 ZIP 解压到临时目录后，严格代码签名校验通过，图标文件与源码资源一致。打包排除了本机 Finder 扩展属性。 |
+| iOS 下载包 | 完整设备构建通过，IPA 包含 Assets.car、iPhone/iPad 图标及实时活动扩展；主 App 与扩展均为 0.1.1（2）。 |
+| 验收边界 | iOS 仍为待签名 IPA，未新增真机安装或灵动岛运行证据；本次没有改动歌词、OAuth 或推送逻辑。资源检查摘要见 `Evidence/icon-assets.json`。 |
 
 ## 2026-10-15：完整 iOS 设备构建与待签名 IPA
 

@@ -1,5 +1,7 @@
 # VerseDock
 
+<img src="Artwork/VerseDock-Icon-1024.png" alt="VerseDock 图标" width="128">
+
 原创 Swift 原生 Spotify 歌词伴侣。macOS：菜单栏歌词、可拖动的悬浮歌词、完整歌词窗口。iPhone：完整歌词、灵动岛、锁屏实时活动。iPad：完整歌词、锁屏实时活动；iPad 没有灵动岛硬件。
 
 这是独立伴侣 App，通过公开接口接入 Spotify。工程不修改 Spotify 安装目录，不注入其进程，也不依赖现成歌词插件。
@@ -7,6 +9,8 @@
 ## 立即运行 Mac 版
 
 GitHub 仓库：[hhhoratioxu/VerseDock](https://github.com/hhhoratioxu/VerseDock)。打包的 Mac App 在 [Releases](https://github.com/hhhoratioxu/VerseDock/releases) 中提供；源码、Xcode 工程和安装说明直接保存在仓库内。
+
+当前图标版为 [v0.1.1-icons](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.1-icons)：Mac App 与 iPhone/iPad 待签名 IPA 都已包含原创 V 图标；[Artwork](Artwork/README.md) 提供主图、设计提示词与导出说明。
 
 下载 `VerseDock-macOS-arm64.zip` 并解压，双击 `VerseDock.app`。本地自行构建的产物位于 `build/VerseDock.app`，也可以在项目目录执行：
 
@@ -37,7 +41,7 @@ Mac 本地读取无需 Spotify Client ID。当前包为 arm64、最低 macOS 14�
 
 ## iPhone/iPad 构建与灵动岛
 
-已经提供 [iPhone/iPad 待签名 IPA](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.0-unsigned-ipa)。下载 `VerseDock-iOS-unsigned.ipa`，使用自己的 Apple 签名身份重新签名安装。包内保留灵动岛/锁屏扩展，最低 iOS/iPadOS 17；本次已完成标准 Xcode 设备构建，但尚未签名或真机验收。详细说明见 [docs/IPA.zh-CN.md](docs/IPA.zh-CN.md)。
+已经提供 [iPhone/iPad 待签名 IPA](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.1-icons)。下载 `VerseDock-iOS-unsigned.ipa`，使用自己的 Apple 签名身份重新签名安装。包内保留灵动岛/锁屏扩展，最低 iOS/iPadOS 17；本次已完成标准 Xcode 设备构建，但尚未签名或真机验收。详细说明见 [docs/IPA.zh-CN.md](docs/IPA.zh-CN.md)。
 
 打开 `VerseDock.xcodeproj`，选择 `VerseDock` scheme。选择你的 Apple 开发者 Team 和设备。部署目标 iOS/iPadOS 17；灵动岛要求具备相应硬件的 iPhone。开启 App 中的实时活动按钮后，系统管理灵动岛和锁屏显示。
 

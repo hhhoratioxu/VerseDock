@@ -1,6 +1,9 @@
 import SwiftUI
 import UniformTypeIdentifiers
 import VerseCore
+#if os(macOS)
+import AppKit
+#endif
 
 enum VerseTheme {
     static let ink = Color(red: 0.055, green: 0.065, blue: 0.09)
@@ -13,6 +16,15 @@ struct ContentView: View {
     @State private var importing = false
     @State private var follow = true
     @Environment(\.scenePhase) private var phase
+    private var brandMark: Image {
+        #if os(macOS)
+        if let url = Bundle.main.url(forResource: "BrandMark", withExtension: "png"),
+           let image = NSImage(contentsOf: url) { return Image(nsImage: image) }
+        return Image(systemName: "waveform")
+        #else
+        return Image("BrandMark")
+        #endif
+    }
     var body: some View {
         VStack(spacing: 0) {
             header.padding(.horizontal, 24).padding(.top, 22).padding(.bottom, 18)
@@ -43,7 +55,8 @@ struct ContentView: View {
     private var header: some View {
         HStack {
             HStack(spacing: 10) {
-                Image(systemName: "waveform").font(.title2).foregroundStyle(VerseTheme.accent)
+                brandMark.resizable().scaledToFit().frame(width: 34, height: 34)
+                    .clipShape(RoundedRectangle(cornerRadius: 8)).accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("VerseDock").font(.system(.title3, design: .rounded, weight: .bold))
                     Text("每一句，都在此刻").font(.caption).foregroundStyle(.secondary)

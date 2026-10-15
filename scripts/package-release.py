@@ -40,6 +40,14 @@ write_archive(source_zip, source_files, 'VerseDock/', ROOT)
 
 manifest = {}
 artifacts = [app_zip, source_zip]
+artwork = ROOT / 'Artwork'
+icon_resources = ROOT / 'App/Resources'
+if artwork.is_dir() and icon_resources.is_dir():
+    icon_files = [p for folder in (artwork, icon_resources) for p in folder.rglob('*')
+                  if p.is_file() and p.name != '.DS_Store']
+    icon_zip = DIST / 'VerseDock-Icons.zip'
+    write_archive(icon_zip, icon_files, 'VerseDock-Icons/', ROOT)
+    artifacts.append(icon_zip)
 ios_ipa = DIST / 'VerseDock-iOS-unsigned.ipa'
 if ios_ipa.is_file():
     artifacts.append(ios_ipa)

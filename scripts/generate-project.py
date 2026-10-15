@@ -34,10 +34,14 @@ def configurations(name, settings):
                defaultConfigurationIsVisible='0', defaultConfigurationName='Release')
 
 all_files = sorted(str(p.relative_to(ROOT)) for directory in ('Sources', 'App', 'Config')
-                   for p in (ROOT / directory).rglob('*') if p.is_file())
+                   for p in (ROOT / directory).rglob('*')
+                   if (p.is_file() or p.suffix == '.xcassets')
+                   and not any(parent.suffix == '.xcassets' for parent in p.parents))
 references = {}
 for path in all_files:
-    kind = 'sourcecode.swift' if path.endswith('.swift') else 'text.plist.xml'
+    kind = 'sourcecode.swift' if path.endswith('.swift') else (
+        'folder.assetcatalog' if path.endswith('.xcassets') else (
+        'image.icns' if path.endswith('.icns') else ('image.png' if path.endswith('.png') else 'text.plist.xml')))
     references[path] = add('file:' + path, isa='PBXFileReference', lastKnownFileType=kind,
                            path=path, sourceTree='<group>')
 
@@ -61,7 +65,7 @@ def dependency(name, target):
 
 common = {'SWIFT_VERSION': '5.0', 'CLANG_ENABLE_MODULES': 'YES', 'CODE_SIGN_STYLE': 'Automatic',
           'MACOSX_DEPLOYMENT_TARGET': '14.0', 'IPHONEOS_DEPLOYMENT_TARGET': '17.0',
-          'MARKETING_VERSION': '0.1.0', 'CURRENT_PROJECT_VERSION': '1'}
+          'MARKETING_VERSION': '0.1.1', 'CURRENT_PROJECT_VERSION': '2'}
 core = [p for p in all_files if p.startswith('Sources/') and p.endswith('.swift')]
 shared = [p for p in all_files if p.startswith('App/Shared/') and p.endswith('.swift')]
 mac = [p for p in all_files if p.startswith('App/macOS/') and p.endswith('.swift')]
@@ -79,6 +83,8 @@ specifications = {
                      'PRODUCT_NAME': 'VerseDock', 'PRODUCT_BUNDLE_IDENTIFIER': 'com.horatio.versedock',
                      'INFOPLIST_FILE': 'Config/iOS-Info.plist', 'CODE_SIGN_ENTITLEMENTS': 'Config/iOS.entitlements',
                      'APNS_ENVIRONMENT': 'development', 'SDKROOT': 'iphoneos', 'TARGETED_DEVICE_FAMILY': '1,2',
+                     'ASSETCATALOG_COMPILER_APPICON_NAME': 'AppIcon',
+                     'ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS': 'NO',
                      'SUPPORTED_PLATFORMS': 'iphoneos iphonesimulator',
                      'LD_RUNPATH_SEARCH_PATHS': '$(inherited) @executable_path/Frameworks'}, 'com.apple.product-type.application'),
  'VerseDockActivity': (widget, {'PRODUCT_NAME': 'VerseDockActivity', 'PRODUCT_BUNDLE_IDENTIFIER': 'com.horatio.versedock.activity',
@@ -99,6 +105,12 @@ for name, (files, settings, product_type) in specifications.items():
         deps.append(dependency(name + ':core', 'VerseCore'))
     frameworks = add(name + ':frameworks', isa='PBXFrameworksBuildPhase', buildActionMask='2147483647', files=linked, runOnlyForDeploymentPostprocessing='0')
     phases = [sources, frameworks]
+    resources = (['App/Resources/Assets.xcassets'] if name == 'VerseDock' else (
+                 ['App/Resources/AppIcon.icns', 'App/Resources/BrandMark.png'] if name == 'VerseDockMac' else []))
+    if resources:
+        resource_files = [add(name + ':resource:' + p, isa='PBXBuildFile', fileRef=references[p]) for p in resources]
+        phases.append(add(name + ':resources', isa='PBXResourcesBuildPhase', buildActionMask='2147483647',
+                          files=resource_files, runOnlyForDeploymentPostprocessing='0'))
     if name == 'VerseDock':
         deps.append(dependency(name + ':widget', 'VerseDockActivity'))
         embedded = add('embedWidget', isa='PBXBuildFile', fileRef=products['VerseDockActivity'], settings={'ATTRIBUTES': ['RemoveHeadersOnCopy']})
