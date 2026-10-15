@@ -18,6 +18,9 @@ struct VerseDockActivityWidget: Widget {
                         .font(.caption2).foregroundStyle(.secondary)
                 }
                 Text(context.state.line).font(.title3.bold()).foregroundStyle(accent).lineLimit(2)
+                if let translation = context.state.translation, !translation.isEmpty {
+                    Text(translation).font(.subheadline).foregroundStyle(.white.opacity(0.85)).lineLimit(2)
+                }
                 Text(context.state.title + " · " + context.state.artist).font(.caption).lineLimit(1)
                 if !context.state.nextLine.isEmpty { Text(context.state.nextLine).font(.caption).foregroundStyle(.secondary).lineLimit(1) }
             }.padding(16).activityBackgroundTint(.black.opacity(0.85)).activitySystemActionForegroundColor(accent)
@@ -35,6 +38,9 @@ struct VerseDockActivityWidget: Widget {
                 DynamicIslandExpandedRegion(.bottom) {
                     VStack(spacing: 6) {
                         Text(context.state.line).font(.headline).foregroundStyle(accent).lineLimit(2)
+                        if let translation = context.state.translation, !translation.isEmpty {
+                            Text(translation).font(.caption).foregroundStyle(.white.opacity(0.85)).lineLimit(2)
+                        }
                         Text(context.isStale ? "等待更新 · 返回 App 或检查 Mac 推送桥" : context.state.nextLine)
                             .font(.caption).foregroundStyle(.secondary).lineLimit(1)
                     }.padding(.vertical, 6)

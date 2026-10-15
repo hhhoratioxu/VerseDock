@@ -22,15 +22,19 @@ from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric.utils import decode_dss_signature
 
 FIELDS = {'title', 'artist', 'line', 'nextLine', 'isPlaying', 'source', 'updatedAt', 'position', 'duration'}
+OPTIONAL_FIELDS = {'translation', 'translationLanguage'}
 WEB = Path(__file__).resolve().parent.parent / 'web'
 
 
 def validate_state(value):
-    if not isinstance(value, dict) or set(value) != FIELDS:
+    if not isinstance(value, dict) or not FIELDS <= set(value) or set(value) - FIELDS - OPTIONAL_FIELDS:
         raise ValueError('invalid content state')
     for field in ('title', 'artist', 'line', 'nextLine', 'source'):
         if not isinstance(value[field], str) or len(value[field]) > 300:
             raise ValueError('text field too long')
+    for field in OPTIONAL_FIELDS:
+        if field in value and value[field] is not None and (not isinstance(value[field], str) or len(value[field]) > 300):
+            raise ValueError('invalid translation field')
     if not isinstance(value['isPlaying'], bool):
         raise ValueError('invalid playback state')
     for field in ('updatedAt', 'position', 'duration'):
@@ -102,14 +106,19 @@ class Relay:
         self.lock = threading.Lock()
         self.db = sqlite3.connect(database, check_same_thread=False)
         self.db.execute('CREATE TABLE IF NOT EXISTS activities (id TEXT PRIMARY KEY, token TEXT NOT NULL, registered REAL NOT NULL)')
+        if 'translation_language' not in {row[1] for row in self.db.execute('PRAGMA table_info(activities)')}:
+            self.db.execute("ALTER TABLE activities ADD COLUMN translation_language TEXT NOT NULL DEFAULT ''")
         self.db.commit()
         self.last_update = 0.0
         if database != ':memory:': os.chmod(database, 0o600)
 
     def register(self, value):
-        if not isinstance(value, dict) or set(value) != {'activityID', 'token'}:
+        if not isinstance(value, dict) or not {'activityID', 'token'} <= set(value) or set(value) - {'activityID', 'token', 'translationLanguage'}:
             raise ValueError('invalid registration')
         identifier, token = value['activityID'], value['token']
+        language = value.get('translationLanguage', '')
+        if not isinstance(language, str) or (language and not re.fullmatch(r'[A-Za-z0-9-]{1,35}', language)):
+            raise ValueError('invalid translation language')
         if not isinstance(identifier, str) or not re.fullmatch(r'[A-Za-z0-9-]{1,100}', identifier):
             raise ValueError('invalid activity identifier')
         if not isinstance(token, str) or not re.fullmatch(r'[0-9a-fA-F]{64,512}', token) or len(token) % 2:
@@ -119,7 +128,8 @@ class Relay:
             count = self.db.execute('SELECT COUNT(*) FROM activities').fetchone()[0]
             exists = self.db.execute('SELECT 1 FROM activities WHERE id = ?', (identifier,)).fetchone()
             if count >= 8 and not exists: raise ValueError('household device limit reached')
-            self.db.execute('INSERT OR REPLACE INTO activities VALUES (?,?,?)', (identifier, token, time.time()))
+            self.db.execute('INSERT OR REPLACE INTO activities (id,token,registered,translation_language) VALUES (?,?,?,?)',
+                            (identifier, token, time.time(), language))
             self.db.commit()
         return {'registered': True}
 
@@ -139,12 +149,16 @@ class Relay:
                 return 429, {'error': 'rate_limited'}
             self.last_update = now
             self.db.execute('DELETE FROM activities WHERE registered < ?', (now - 8 * 3600,))
-            registrations = self.db.execute('SELECT id, token FROM activities').fetchall()
+            registrations = self.db.execute('SELECT id, token, translation_language FROM activities').fetchall()
             accepted = 0
             failed = 0
-            for identifier, token in registrations:
+            for identifier, token, language in registrations:
+                device_state = dict(state)
+                if not language or language != state.get('translationLanguage'):
+                    device_state.pop('translation', None)
+                    device_state.pop('translationLanguage', None)
                 try:
-                    result = self.apns.send(token, activity_payload(state, now))
+                    result = self.apns.send(token, activity_payload(device_state, now))
                 except (httpx.HTTPError, OSError):
                     result = 'failed'
                 if result == 'accepted': accepted += 1

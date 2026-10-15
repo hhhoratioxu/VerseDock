@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-15",
+  "macOS": "27.2 arm64",
+  "version": "0.1.2 (3)",
+  "actualStatusBar": {
+    "implementation": "NSStatusBar button text",
+    "manualUserConfirmation": "User confirmed visible lyrics and scrolling",
+    "finalWidthCharacters": 18,
+    "finalScrolling": false
+  },
+  "floatingWindow": {
+    "nativeDraggingObserved": true,
+    "savedFrameBefore": "538 72 760 145",
+    "savedFrameAfter": "54 874 760 145",
+    "bilingualOriginalAboveTranslationObserved": true,
+    "finalVisible": false
+  },
+  "realServiceFallbackObserved": [
+    {
+      "track": "十年",
+      "artist": "Eason Chan",
+      "primary": "LRCLIB",
+      "primaryOutcome": "429 cooldown",
+      "selected": "QQ 音乐"
+    },
+    {
+      "track": "幸福在歌唱",
+      "artist": "A-Lin",
+      "primary": "LRCLIB",
+      "primaryOutcome": "HTTP 503",
+      "selected": "QQ 音乐"
+    }
+  ],
+  "providerSelection": {
+    "choices": [
+      "automatic",
+      "lrclib",
+      "qqMusic",
+      "netEase",
+      "lyricsOVH"
+    ],
+    "netEaseManualMatchObserved": true,
+    "finalChoice": "automatic"
+  },
+  "translation": {
+    "enabledByDefault": false,
+    "realChineseToEnglishBatchObserved": true,
+    "translatedUniqueLinesObserved": 39,
+    "originalAboveTranslationObservedInMainWindow": true,
+    "originalAboveTranslationObservedInFloatingWindow": true,
+    "offRemovesTranslationObserved": true,
+    "finalEnabled": false,
+    "languagesQueriedFromSystem": 21,
+    "allLanguagePairsTested": false,
+    "statusBarBilingualVisualAcceptance": false
+  },
+  "iOS": {
+    "deviceBuild": "passed, unsigned",
+    "physicalDeviceTested": false,
+    "APNsDeliveryTested": false
+  },
+  "spotifyNativeLyrics": "Unavailable through the official integration; no native-lyrics priority check implemented",
+  "privacy": "No lyric bodies, cookies, Spotify tokens, account details or signing materials included in this report"
+}

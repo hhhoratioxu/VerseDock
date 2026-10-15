@@ -14,8 +14,12 @@ public struct LyricDocument: Codable, Equatable, Sendable {
     public let plainText: String
     public let source: String
     public let instrumental: Bool
-    public init(lines: [LyricLine], plainText: String = "", source: String, instrumental: Bool = false) {
+    public let sourceURL: URL?
+    public let matchNote: String?
+    public init(lines: [LyricLine], plainText: String = "", source: String, instrumental: Bool = false,
+                sourceURL: URL? = nil, matchNote: String? = nil) {
         self.lines = lines; self.plainText = plainText; self.source = source; self.instrumental = instrumental
+        self.sourceURL = sourceURL; self.matchNote = matchNote
     }
     /// Positive adjustment displays the lyrics earlier. LRC's own offset is already applied by the parser.
     public func activeIndex(at position: Double, adjustment: Double = 0) -> Int? {

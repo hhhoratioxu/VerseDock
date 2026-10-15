@@ -1,0 +1,131 @@
+{
+  "checkedOn": "2026-10-15",
+  "network": "real anonymous HTTPS requests from this Mac",
+  "reports": [
+    {
+      "artist": "小賤",
+      "attempts": [
+        {
+          "message": "已取得同步歌词",
+          "outcome": "matched",
+          "provider": "lrclib"
+        }
+      ],
+      "duration": 235,
+      "firstTimestamp": 0.39,
+      "lastTimestamp": 222.12,
+      "matchNote": "版本时长相差 6.0 秒，可用 ± 校准",
+      "plainCharacters": 361,
+      "source": "LRCLIB",
+      "timedLines": 37,
+      "title": "最後是我開了口"
+    },
+    {
+      "artist": "小賤",
+      "attempts": [
+        {
+          "message": "已取得同步歌词",
+          "outcome": "matched",
+          "provider": "qqMusic"
+        }
+      ],
+      "duration": 235,
+      "firstTimestamp": 0,
+      "lastTimestamp": 215.6,
+      "matchNote": "版本时长相差 6.0 秒，可用 ± 校准",
+      "plainCharacters": 422,
+      "source": "QQ 音乐",
+      "timedLines": 42,
+      "title": "最後是我開了口"
+    },
+    {
+      "artist": "Coldplay",
+      "attempts": [
+        {
+          "message": "只有纯文本，继续寻找同步歌词",
+          "outcome": "plain",
+          "provider": "lyricsOVH"
+        }
+      ],
+      "duration": 269,
+      "plainCharacters": 1089,
+      "source": "lyrics.ovh",
+      "timedLines": 0,
+      "title": "Yellow"
+    },
+    {
+      "artist": "Hebe Tien",
+      "attempts": [
+        {
+          "message": "已取得同步歌词",
+          "outcome": "matched",
+          "provider": "lrclib"
+        }
+      ],
+      "duration": 259,
+      "firstTimestamp": 15.49,
+      "lastTimestamp": 249.75,
+      "matchNote": "版本时长相差 7.0 秒，可用 ± 校准",
+      "plainCharacters": 487,
+      "source": "LRCLIB",
+      "timedLines": 47,
+      "title": "小幸運 - 電影《我的少女時代》主題曲"
+    },
+    {
+      "artist": "Hebe Tien",
+      "attempts": [
+        {
+          "message": "已取得同步歌词",
+          "outcome": "matched",
+          "provider": "qqMusic"
+        }
+      ],
+      "duration": 259,
+      "firstTimestamp": 0,
+      "lastTimestamp": 239.41,
+      "matchNote": "版本时长相差 4.0 秒，可用 ± 校准",
+      "plainCharacters": 508,
+      "source": "QQ 音乐",
+      "timedLines": 44,
+      "title": "小幸運 - 電影《我的少女時代》主題曲"
+    }
+  ],
+  "lyricsTextIncluded": false,
+  "deviceTested": false,
+  "netEaseProbes": [
+    {
+      "artist": "Eason Chan",
+      "attempts": [
+        {
+          "message": "已取得同步歌词",
+          "outcome": "matched",
+          "provider": "netEase"
+        }
+      ],
+      "duration": 205.4,
+      "firstTimestamp": 0,
+      "lastTimestamp": 178.99,
+      "plainCharacters": 429,
+      "source": "网易云音乐",
+      "timedLines": 48,
+      "title": "十年"
+    },
+    {
+      "artist": "Coldplay",
+      "attempts": [
+        {
+          "message": "已取得同步歌词",
+          "outcome": "matched",
+          "provider": "netEase"
+        }
+      ],
+      "duration": 266.8,
+      "firstTimestamp": 0,
+      "lastTimestamp": 266.313,
+      "plainCharacters": 1531,
+      "source": "网易云音乐",
+      "timedLines": 54,
+      "title": "Yellow"
+    }
+  ]
+}

@@ -11,6 +11,8 @@ struct RelayState: Codable, Equatable {
     let updatedAt: Double
     let position: Double
     let duration: Double
+    var translation: String? = nil
+    var translationLanguage: String? = nil
 }
 
 enum RelayClient {

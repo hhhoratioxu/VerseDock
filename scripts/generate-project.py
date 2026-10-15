@@ -36,6 +36,7 @@ def configurations(name, settings):
 all_files = sorted(str(p.relative_to(ROOT)) for directory in ('Sources', 'App', 'Config')
                    for p in (ROOT / directory).rglob('*')
                    if (p.is_file() or p.suffix == '.xcassets')
+                   and p.name != '.DS_Store'
                    and not any(parent.suffix == '.xcassets' for parent in p.parents))
 references = {}
 for path in all_files:
@@ -65,7 +66,7 @@ def dependency(name, target):
 
 common = {'SWIFT_VERSION': '5.0', 'CLANG_ENABLE_MODULES': 'YES', 'CODE_SIGN_STYLE': 'Automatic',
           'MACOSX_DEPLOYMENT_TARGET': '14.0', 'IPHONEOS_DEPLOYMENT_TARGET': '17.0',
-          'MARKETING_VERSION': '0.1.1', 'CURRENT_PROJECT_VERSION': '2'}
+          'MARKETING_VERSION': '0.1.2', 'CURRENT_PROJECT_VERSION': '3'}
 core = [p for p in all_files if p.startswith('Sources/') and p.endswith('.swift')]
 shared = [p for p in all_files if p.startswith('App/Shared/') and p.endswith('.swift')]
 mac = [p for p in all_files if p.startswith('App/macOS/') and p.endswith('.swift')]

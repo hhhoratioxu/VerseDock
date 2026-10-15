@@ -32,6 +32,22 @@ class RelayTests(unittest.TestCase):
         self.assertEqual(payload['aps']['content-state'], value)
         self.assertEqual(payload['aps']['stale-date'], 153)
         self.assertNotIn('alert', payload['aps'])
+    def test_optional_translation_is_validated_and_preserved(self):
+        value = {**state(), 'translation': 'Translated original test line', 'translationLanguage': 'en'}
+        self.assertEqual(validate_state(value), value)
+        self.assertEqual(activity_payload(value, 123)['aps']['content-state']['translation'], value['translation'])
+        self.assertEqual(validate_state(state()).get('translation'), None)
+        for extra in ({'translation': True}, {'translation': 'x' * 301}, {'translationLanguage': 1}, {'unknown': 'x'}):
+            with self.assertRaises(ValueError): validate_state({**state(), **extra})
+    def test_device_translation_requires_opt_in_and_matching_language(self):
+        for preference in ('', 'fr', 'en'):
+            self.relay.register({'activityID':'test-id', 'token':'ab' * 32, 'translationLanguage':preference})
+            self.relay.last_update = 0
+            self.relay.update({**state(), 'translation':'Original test translation', 'translationLanguage':'en'})
+            delivered = self.apns.sent[-1][1]['aps']['content-state']
+            self.assertEqual('translation' in delivered, preference == 'en')
+        with self.assertRaises(ValueError):
+            self.relay.register({'activityID':'test-id', 'token':'ab' * 32, 'translationLanguage':True})
     def test_delivery_throttle_and_unregistration(self):
         self.register()
         self.assertEqual(self.relay.update(state()), (200, {'accepted': 1}))

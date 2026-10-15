@@ -12,6 +12,8 @@ struct LyricsActivityAttributes: ActivityAttributes {
         let updatedAt: Double
         let position: Double
         let duration: Double
+        var translation: String? = nil
+        var translationLanguage: String? = nil
     }
     let sessionName: String
 }

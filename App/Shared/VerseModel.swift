@@ -7,20 +7,59 @@ import AppKit
 @MainActor final class VerseModel: ObservableObject {
     static let shared = VerseModel()
     @Published var snapshot: PlaybackSnapshot?
-    @Published var lyrics: LyricDocument?
+    @Published var lyrics: LyricDocument? { didSet { resetTranslation() } }
     @Published var progress: Double = 0
     @Published var activeIndex: Int?
     @Published var status = "等待 Spotify"
-    @Published var lyricsStatus = "播放歌曲后，导入 LRC 或开启在线歌词"
+    @Published var lyricsStatus = "播放歌曲后自动查找歌词"
+    @Published var lyricsAttempts: [LyricsAttempt] = []
     @Published var notice = ""
     @Published var isDemo = false
     @Published var loadingLyrics = false
+    @Published var translationEnabled = UserDefaults.standard.bool(forKey: "translationEnabled") {
+        didSet { UserDefaults.standard.set(translationEnabled, forKey: "translationEnabled"); translationPreferenceChanged() }
+    }
+    @Published var translationTarget = Locale.Language(identifier: UserDefaults.standard.string(forKey: "translationTarget") ?? "zh-Hans").minimalIdentifier {
+        didSet { UserDefaults.standard.set(translationTarget, forKey: "translationTarget"); translationPreferenceChanged() }
+    }
+    @Published var translationSource = UserDefaults.standard.string(forKey: "translationSource") ?? "auto" {
+        didSet { UserDefaults.standard.set(translationSource, forKey: "translationSource"); translationPreferenceChanged() }
+    }
+    @Published private(set) var translationRevision = UUID()
+    @Published var translatedLines: [String: String] = [:]
+    @Published var translationLanguages: [TranslationLanguage] = [.init(id: "zh-Hans", name: "简体中文")]
+    @Published var translationStatus = "歌词翻译已关闭"
+    var translationAvailable: Bool {
+        if #available(macOS 15.0, iOS 18.0, *) { return true }
+        return false
+    }
+    var currentTranslation: String { translatedLine(currentLine) }
+    func translatedLine(_ original: String) -> String { translationEnabled ? translatedLines[original] ?? "" : "" }
+    func retryTranslation() { resetTranslation() }
+    private func translationPreferenceChanged() {
+        resetTranslation()
+        #if os(iOS)
+        // A remote APNs update must never restore a translation the phone's user has switched off.
+        if liveActivity.isRunning { liveActivity.stop() }
+        #endif
+    }
+    private func resetTranslation() {
+        translatedLines = [:]; translationRevision = UUID()
+        translationStatus = !translationEnabled ? "歌词翻译已关闭" :
+            (!translationAvailable ? "歌词翻译需要 macOS 15 或 iOS/iPadOS 18 及以上" : "等待翻译 · 首次使用请打开歌词窗口")
+    }
     @Published var adjustment: Double = 0 { didSet { saveAdjustment(); tick() } }
-    @Published var onlineLyrics = UserDefaults.standard.bool(forKey: "onlineLyrics") {
+    @Published var onlineLyrics = UserDefaults.standard.object(forKey: "onlineLyrics") as? Bool ?? true {
         didSet {
             UserDefaults.standard.set(onlineLyrics, forKey: "onlineLyrics")
             lookupTask?.cancel()
             if let track = snapshot?.track { loadLyrics(track) }
+        }
+    }
+    @Published var lyricsProviderChoice = LyricsProviderChoice(rawValue: UserDefaults.standard.string(forKey: "lyricsProviderChoice") ?? "") ?? .automatic {
+        didSet {
+            UserDefaults.standard.set(lyricsProviderChoice.rawValue, forKey: "lyricsProviderChoice")
+            if oldValue != lyricsProviderChoice, let track = snapshot?.track { loadLyrics(track, useCache: false) }
         }
     }
     @Published var clientID = UserDefaults.standard.string(forKey: "clientID") ?? ""
@@ -29,10 +68,20 @@ import AppKit
     @Published var relayEnabled = UserDefaults.standard.bool(forKey: "relayEnabled")
     @Published var relayKey = String(data: KeychainStore.read("relayKey") ?? Data(), encoding: .utf8) ?? ""
     @Published var relayStatus = "未连接推送桥"
-    @Published var menuLength = UserDefaults.standard.integer(forKey: "menuLength") == 0 ? 18 : UserDefaults.standard.integer(forKey: "menuLength")
+    @Published var menuLength = UserDefaults.standard.integer(forKey: "menuLength") == 0 ? 18 : UserDefaults.standard.integer(forKey: "menuLength") {
+        didSet { UserDefaults.standard.set(menuLength, forKey: "menuLength") }
+    }
+    @Published var menuScrolling = UserDefaults.standard.object(forKey: "menuScrolling") as? Bool ?? false {
+        didSet { UserDefaults.standard.set(menuScrolling, forKey: "menuScrolling") }
+    }
+    @Published private(set) var menuText = "VerseDock"
+    @Published private(set) var menuTranslation = ""
     @Published var overlayFont: Double = UserDefaults.standard.double(forKey: "overlayFont") == 0 ? 26 : UserDefaults.standard.double(forKey: "overlayFont")
     @Published var overlayVisible = UserDefaults.standard.bool(forKey: "overlayVisible")
     private let store = LyricStore()
+    private let lyricsClient = LyricsClient()
+    private var menuLine = ""
+    private var menuLineStartedAt = Date()
     private let spotify = SpotifyAPI()
     private var tokens: SpotifyTokens?
     private var timer: Timer?
@@ -66,7 +115,7 @@ import AppKit
         return lyrics.lines.indices.contains(index) ? lyrics.lines[index].text : ""
     }
     var menuTitle: String {
-        String(currentLine.replacingOccurrences(of: "\n", with: " · ").prefix(menuLength))
+        menuText
     }
     func start() {
         guard timer == nil else { return }
@@ -93,6 +142,14 @@ import AppKit
         progress = snapshot?.progress(at: Date()) ?? 0
         let index = lyrics?.activeIndex(at: progress, adjustment: adjustment)
         if index != activeIndex { activeIndex = index }
+        let line = currentLine
+        if line != menuLine { menuLine = line; menuLineStartedAt = Date() }
+        let title = LyricMarquee.text(line, width: menuLength,
+            elapsed: Date().timeIntervalSince(menuLineStartedAt), enabled: menuScrolling)
+        if title != menuText { menuText = title }
+        let translatedTitle = LyricMarquee.text(currentTranslation, width: menuLength,
+            elapsed: Date().timeIntervalSince(menuLineStartedAt), enabled: menuScrolling)
+        if translatedTitle != menuTranslation { menuTranslation = translatedTitle }
         #if os(iOS)
         liveActivity.update(state: relayState())
         #else
@@ -103,7 +160,9 @@ import AppKit
         RelayState(title: snapshot?.track.title ?? "等待 Spotify", artist: snapshot?.track.artist ?? "",
             line: currentLine, nextLine: nextLine, isPlaying: snapshot?.isPlaying ?? false,
             source: isDemo ? "原创演示" : (lyrics?.source ?? "暂无歌词"), updatedAt: Date().timeIntervalSince1970,
-            position: progress, duration: snapshot?.track.duration ?? 0)
+            position: progress, duration: snapshot?.track.duration ?? 0,
+            translation: currentTranslation.isEmpty ? nil : currentTranslation,
+            translationLanguage: translationEnabled ? translationTarget : nil)
     }
     private func poll() async {
         polling = true
@@ -167,23 +226,41 @@ import AppKit
         }
         tick()
     }
-    private func loadLyrics(_ track: Track) {
+    private func loadLyrics(_ track: Track, useCache: Bool = true) {
         lookupTask?.cancel()
-        lyrics = nil; activeIndex = nil; loadingLyrics = true; lyricsStatus = "正在查找歌词"
+        lyrics = nil; activeIndex = nil; loadingLyrics = true; lyricsAttempts = []; lyricsStatus = "正在查找歌词"
         lookupTask = Task {
-            if let cached = await store.load(track.id), !Task.isCancelled, snapshot?.track.id == track.id {
-                lyrics = cached; loadingLyrics = false; lyricsStatus = "来源：\(cached.source) · 本地缓存"; tick(); return
+            if useCache, let cached = await store.load(track.id), !Task.isCancelled, snapshot?.track.id == track.id,
+               cached.source == "本地 LRC" || lyricsProviderChoice.providers.map(\.name).contains(cached.source) {
+                lyrics = cached; lyricsStatus = describe(cached, cached: true); tick()
+                // Imported files remain authoritative; plain online caches may be upgraded to synchronized lyrics.
+                if !onlineLyrics || cached.source == "本地 LRC" || !cached.lines.isEmpty || cached.instrumental {
+                    loadingLyrics = false; return
+                }
             }
             guard !Task.isCancelled else { return }
             guard onlineLyrics else {
                 loadingLyrics = false; lyricsStatus = "请导入这首歌的 LRC，或在设置中开启在线歌词"; return
             }
             do {
-                let value = try await LyricsClient().fetch(for: track)
+                let result = try await lyricsClient.lookup(for: track, providers: lyricsProviderChoice.providers) { [self] message in
+                    await self.lookupProgress(message, trackID: track.id)
+                }
                 guard !Task.isCancelled, snapshot?.track.id == track.id else { return }
-                lyrics = value; loadingLyrics = false
-                lyricsStatus = value == nil ? "没有找到匹配歌词，可以导入 LRC" : "来源：LRCLIB"
-                if let value { try await store.save(value, id: track.id) }
+                lyricsAttempts = result.attempts; loadingLyrics = false
+                if let value = result.document {
+                    lyrics = value; lyricsStatus = describe(value)
+                    do { try await store.save(value, id: track.id) }
+                    catch { notice = "歌词已显示，缓存写入失败：\(error.localizedDescription)" }
+                } else if let lyrics { lyricsStatus = describe(lyrics, cached: true) + " · 暂无新的同步歌词" }
+                else {
+                    let failed = result.attempts.contains { $0.outcome == "unavailable" }
+                    if lyricsProviderChoice == .automatic {
+                        lyricsStatus = failed ? "已尝试多个来源，部分服务暂不可用；可重试或导入 LRC" : "多个来源均未找到匹配歌词，可重试或导入 LRC"
+                    } else {
+                        lyricsStatus = "\(lyricsProviderChoice.name)" + (failed ? " 暂不可用" : " 未找到匹配歌词") + "；可重试或改选自动"
+                    }
+                }
                 tick()
             } catch {
                 guard !Task.isCancelled, snapshot?.track.id == track.id else { return }
@@ -191,7 +268,16 @@ import AppKit
             }
         }
     }
-    func retryLyrics() { if let track = snapshot?.track { loadLyrics(track) } }
+    private func lookupProgress(_ message: String, trackID: String) {
+        guard !Task.isCancelled, snapshot?.track.id == trackID else { return }
+        lyricsStatus = message
+    }
+    private func describe(_ value: LyricDocument, cached: Bool = false) -> String {
+        "来源：\(value.source)" + (cached ? " · 本地缓存" : "") +
+            (value.lines.isEmpty && !value.instrumental ? " · 纯文本，无同步时间轴" : "") +
+            (value.matchNote.map { " · " + $0 } ?? "")
+    }
+    func retryLyrics() { if let track = snapshot?.track { loadLyrics(track, useCache: false) } }
     func importLyrics(_ url: URL) {
         guard let track = snapshot?.track else { notice = "请先播放歌曲，导入文件会绑定当前歌曲"; return }
         let granted = url.startAccessingSecurityScopedResource()
@@ -204,13 +290,13 @@ import AppKit
             let document = LRCParser.parse(text)
             guard !document.lines.isEmpty || !document.plainText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             else { throw VerseError.message("文件中没有可显示的歌词") }
-            lookupTask?.cancel(); lyrics = document; loadingLyrics = false; lyricsStatus = "来源：本地导入"
+            lookupTask?.cancel(); lyrics = document; loadingLyrics = false; lyricsAttempts = []; lyricsStatus = "来源：本地导入"
             Task { do { try await store.save(document, id: track.id) } catch { notice = error.localizedDescription } }
             tick()
         } catch { notice = error.localizedDescription }
     }
     func demo() {
-        generation += 1; lookupTask?.cancel(); isDemo = true; loadingLyrics = false
+        generation += 1; lookupTask?.cancel(); isDemo = true; loadingLyrics = false; lyricsAttempts = []
         let track = Track(id: "demo-original", title: "在此刻，听见", artist: "VerseDock 原创示例", album: "交互演示", duration: 36)
         snapshot = PlaybackSnapshot(track: track, position: 0, isPlaying: true)
         lyrics = LRCParser.parse("""
@@ -236,6 +322,7 @@ import AppKit
         UserDefaults.standard.set(relayURL, forKey: "relayURL")
         UserDefaults.standard.set(relayEnabled, forKey: "relayEnabled")
         UserDefaults.standard.set(menuLength, forKey: "menuLength")
+        UserDefaults.standard.set(menuScrolling, forKey: "menuScrolling")
         UserDefaults.standard.set(overlayFont, forKey: "overlayFont")
         do { try KeychainStore.write(Data(relayKey.utf8), account: "relayKey") }
         catch { notice = "配对密钥保存失败：\(error.localizedDescription)" }
@@ -244,7 +331,7 @@ import AppKit
         if let id = snapshot?.track.id { UserDefaults.standard.set(adjustment, forKey: "offset.\(id)") }
     }
     func clearLyrics() {
-        lookupTask?.cancel()
+        lookupTask?.cancel(); loadingLyrics = false; lyricsAttempts = []
         Task {
             do { try await store.clear(); lyrics = nil; activeIndex = nil; lyricsStatus = "本地歌词缓存已清除" }
             catch { notice = error.localizedDescription }
@@ -258,7 +345,7 @@ import AppKit
     private func pushRelayIfNeeded() {
         guard relayEnabled, relayTask == nil, !isDemo, Date().timeIntervalSince(lastRelay) >= 5 else { return }
         let state = relayState()
-        let signature = "\(state.title)|\(state.line)|\(state.isPlaying)"
+        let signature = "\(state.title)|\(state.line)|\(state.translation ?? "")|\(state.translationLanguage ?? "")|\(state.isPlaying)"
         guard signature != lastRelaySignature || Date().timeIntervalSince(lastRelay) >= 20 else { return }
         lastRelay = Date()
         let base = relayURL, key = relayKey

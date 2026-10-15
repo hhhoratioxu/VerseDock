@@ -37,6 +37,7 @@ struct ContentView: View {
         .foregroundStyle(.white)
         .tint(VerseTheme.accent)
         .preferredColorScheme(.dark)
+        .modifier(LyricTranslationHost(model: model))
         .sheet(isPresented: $settings) { SettingsView(model: model) }
         .fileImporter(isPresented: $importing, allowedContentTypes: [.plainText, UTType(filenameExtension: "lrc") ?? .data]) { result in
             switch result {
@@ -63,6 +64,9 @@ struct ContentView: View {
                 }
             }
             Spacer()
+            Button { model.retryLyrics() } label: { Image(systemName: "arrow.clockwise") }
+                .help("重新查找歌词（跳过缓存）").accessibilityLabel("重新查找歌词")
+                .disabled(model.snapshot == nil || model.loadingLyrics)
             Button { importing = true } label: { Image(systemName: "square.and.arrow.down") }.help("导入 LRC 歌词")
                 .accessibilityLabel("导入 LRC 歌词")
             Button { settings = true } label: { Image(systemName: "slider.horizontal.3") }.help("设置")
@@ -96,9 +100,17 @@ struct ContentView: View {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 24) {
                         ForEach(document.lines) { line in
-                            Text(line.text.isEmpty ? "♪" : line.text)
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(line.text.isEmpty ? "♪" : line.text)
                                 .font(.system(size: model.activeIndex == line.id ? 30 : 26, weight: .bold, design: .rounded))
                                 .foregroundStyle(model.activeIndex == line.id ? VerseTheme.accent : .white.opacity(0.30))
+                                if !model.translatedLine(line.text).isEmpty {
+                                    Text(model.translatedLine(line.text))
+                                        .font(.system(size: 18, weight: .medium))
+                                        .foregroundStyle(.white.opacity(model.activeIndex == line.id ? 0.85 : 0.35))
+                                        .accessibilityLabel("译文：" + model.translatedLine(line.text))
+                                }
+                            }
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.vertical, 5)
                                 .id(line.id)
@@ -122,7 +134,14 @@ struct ContentView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
                     Text("纯文本歌词 · 无同步时间戳").font(.caption).foregroundStyle(VerseTheme.accent)
-                    Text(document.plainText).font(.system(size: 24, weight: .medium)).lineSpacing(10).textSelection(.enabled)
+                    ForEach(Array(document.plainText.components(separatedBy: .newlines).enumerated()), id: \.offset) { _, text in
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(text).font(.system(size: 24, weight: .medium)).textSelection(.enabled)
+                            if !model.translatedLine(text).isEmpty {
+                                Text(model.translatedLine(text)).font(.system(size: 18)).foregroundStyle(.secondary).textSelection(.enabled)
+                            }
+                        }
+                    }
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(28)
             }
         } else {
@@ -166,10 +185,12 @@ struct ContentView: View {
                 #endif
             }.buttonStyle(.borderless).font(.caption)
             HStack {
-                Text(model.lyricsStatus).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
+                Text(model.lyricsStatus).font(.caption2).foregroundStyle(.secondary).lineLimit(3)
                 Spacer()
+                if let link = model.lyrics?.sourceURL { Link("歌词来源 ↗", destination: link).font(.caption2) }
                 if let link = model.snapshot?.track.spotifyURL { Link("Spotify ↗", destination: link).font(.caption2) }
             }
+            if model.translationEnabled { Text(model.translationStatus).font(.caption2).foregroundStyle(.secondary) }
             if model.isDemo {
                 HStack {
                     Button("回到 Spotify") { model.endDemo() }
@@ -189,16 +210,49 @@ struct SettingsView: View {
         NavigationStack {
             Form {
                 Section("歌词来源") {
-                    Toggle("使用 LRCLIB 在线歌词", isOn: $model.onlineLyrics)
-                    Text("开启后将歌名、歌手、专辑和时长发送到 lrclib.net。也可以只导入自己的 UTF-8 LRC 文件。歌词存储在本机，可随时清除。")
+                    Toggle("自动查找在线歌词与备用来源", isOn: $model.onlineLyrics)
+                    Picker("备用歌词来源", selection: $model.lyricsProviderChoice) {
+                        ForEach(LyricsProviderChoice.allCases, id: \.rawValue) { choice in
+                            Text(choice.name).tag(choice)
+                        }
+                    }
+                    .disabled(!model.onlineLyrics)
+                    Text("默认自动换源；手动指定后仅访问该提供商。选择会自动保存，切换时重新查找当前歌曲。")
                         .font(.caption).foregroundStyle(.secondary)
+                    Text("Spotify 原词：目前官方接口未开放歌词读取，无法判断其是否有词。当前自动方案依次尝试 LRCLIB、QQ 音乐、网易云和 lyrics.ovh，界面会标明实际来源。")
+                        .font(.caption).foregroundStyle(.secondary)
+                    Text("YouTube Music、Apple Music 暂无已接通的歌词读取方式。备用来源仅接收歌曲信息，不接收 Spotify 授权；歌词缓存在本机，也可导入自己的 UTF-8 LRC。")
+                        .font(.caption).foregroundStyle(.secondary)
+                    ForEach(Array(model.lyricsAttempts.enumerated()), id: \.offset) { _, attempt in
+                        Text("\(attempt.provider.name)：\(attempt.message)").font(.caption).foregroundStyle(.secondary)
+                    }
+                    Button("重新查找当前歌曲") { model.retryLyrics() }.disabled(model.loadingLyrics || model.snapshot == nil)
                     Button("清除本地歌词缓存") { model.clearLyrics() }
+                }
+                Section("歌词翻译") {
+                    Toggle("开启歌词翻译", isOn: $model.translationEnabled).disabled(!model.translationAvailable)
+                    Picker("翻译为", selection: $model.translationTarget) {
+                        ForEach(model.translationLanguages) { language in Text(language.name).tag(language.id) }
+                    }.disabled(!model.translationEnabled)
+                    Picker("原词语言", selection: $model.translationSource) {
+                        Text("自动识别").tag("auto")
+                        ForEach(model.translationLanguages) { language in Text(language.name).tag(language.id) }
+                    }.disabled(!model.translationEnabled)
+                    Text("默认关闭。开启后原词在上、译文在下；支持的主流语言由本机系统提供。使用 Apple 系统翻译，首次可能需要按提示下载语言包。需要 macOS 15 或 iOS/iPadOS 18 及以上。机器译文仅供参考。")
+                        .font(.caption).foregroundStyle(.secondary)
+                    Text(model.translationStatus).font(.caption).foregroundStyle(.secondary)
+                    #if os(iOS)
+                    Text("更改翻译偏好会结束当前实时活动，请重新开启。后台译文来自 Mac 推送桥，两端目标语言需一致；手机未开启翻译时不接收译文。")
+                        .font(.caption).foregroundStyle(.secondary)
+                    #endif
+                    Button("重试翻译") { model.retryTranslation() }.disabled(!model.translationEnabled || model.lyrics == nil)
                 }
                 #if os(macOS)
                 Section("Mac 显示") {
-                    Stepper("菜单栏最多 \(model.menuLength) 个字符", value: $model.menuLength, in: 8...40)
+                    Stepper("状态栏最多 \(model.menuLength) 个字符", value: $model.menuLength, in: 8...40)
+                    Toggle("状态栏歌词滚动", isOn: $model.menuScrolling)
                     Slider(value: $model.overlayFont, in: 18...48, step: 1) { Text("悬浮字号") }
-                    Text("悬浮字号：\(Int(model.overlayFont)) · 可拖动悬浮窗，右键隐藏。菜单栏始终保留入口。")
+                    Text("顶部状态栏直接显示当前歌词。显示长度与滚动开关独立设置并自动保存，默认静态；开启滚动后，放不下的长句从头滚动。悬浮字号：\(Int(model.overlayFont))，拖动歌词或空白处可移动，右键可隐藏。")
                         .font(.caption).foregroundStyle(.secondary)
                 }
                 #else
@@ -225,7 +279,7 @@ struct SettingsView: View {
                     Text(model.relayStatus).font(.caption).foregroundStyle(.secondary)
                 }
                 Section("关于") {
-                    Text("VerseDock 0.1 · 原创原生实现")
+                    Text("VerseDock 0.1.2 · 原创原生实现")
                     Text("独立 Spotify 歌词伴侣。应用代码从零编写，无第三方歌词插件或 Spotify 客户端补丁。歌词内容归其权利人所有。")
                         .font(.caption).foregroundStyle(.secondary)
                 }

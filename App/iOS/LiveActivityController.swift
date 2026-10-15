@@ -41,9 +41,9 @@ import VerseCore
                 for await token in value.pushTokenUpdates {
                     guard !Task.isCancelled, generation == requestGeneration else { return }
                     let hex = token.map { String(format: "%02x", $0) }.joined()
-                    struct Registration: Encodable { let activityID: String; let token: String }
+                    struct Registration: Encodable { let activityID: String; let token: String; let translationLanguage: String }
                     do {
-                        try await RelayClient.send(Registration(activityID: value.id, token: hex), path: "register",
+                        try await RelayClient.send(Registration(activityID: value.id, token: hex, translationLanguage: state.translationLanguage ?? ""), path: "register",
                             base: relayURL, key: relayKey)
                         guard generation == requestGeneration else {
                             try? await unregister(value.id, base: relayURL, key: relayKey); return
@@ -56,7 +56,7 @@ import VerseCore
     }
     func update(state: RelayState) {
         guard let activity, updateTask == nil else { return }
-        let signature = "\(state.title)|\(state.line)|\(state.nextLine)|\(state.isPlaying)|\(state.source)"
+        let signature = "\(state.title)|\(state.line)|\(state.nextLine)|\(state.translation ?? "")|\(state.translationLanguage ?? "")|\(state.isPlaying)|\(state.source)"
         guard signature != lastSignature || Date().timeIntervalSince(lastUpdate) >= 20 else { return }
         lastSignature = signature
         lastUpdate = Date()
@@ -89,7 +89,8 @@ import VerseCore
     private func content(_ value: RelayState) -> ActivityContent<LyricsActivityAttributes.ContentState> {
         ActivityContent(state: .init(title: value.title, artist: value.artist, line: value.line,
             nextLine: value.nextLine, isPlaying: value.isPlaying, source: value.source,
-            updatedAt: value.updatedAt, position: value.position, duration: value.duration),
+            updatedAt: value.updatedAt, position: value.position, duration: value.duration,
+            translation: value.translation, translationLanguage: value.translationLanguage),
             staleDate: Date().addingTimeInterval(30))
     }
 }
