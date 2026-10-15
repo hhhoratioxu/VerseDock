@@ -1,6 +1,8 @@
 {
   "date": "2026-10-15",
   "appVersion": "0.1.9 (10)",
+  "releaseBuildCommit": "fc01dd69e12143d7bb1d67905e0d2129007b06e8",
+  "followupRebuiltBinaryOrMovedTag": false,
   "originalImplementation": true,
   "changesSince018": [
     "reuse existing original 1024-pixel artwork in Mac and iOS BrandMark resources",
@@ -46,12 +48,42 @@
     "floatingHiddenViaContextMenu": true
   },
   "spotifyRuntime": {
+    "snapshotContext": "initial 0.1.9 restart, before the original demo and follow-up checks",
     "originalLyricsRestoredAfterRestart": true,
     "provider": "Musixmatch",
     "playbackChangedByAgent": false,
     "observedState": "paused",
     "observedPositionSeconds": 42,
     "observedDurationSeconds": 263
+  },
+  "finalFollowupRuntime": {
+    "systemMenuClosedByUser": true,
+    "normalWindowObservedAfterUserConfirmation": true,
+    "originalDemoExited": true,
+    "realSpotifyLyricsRestored": true,
+    "spotifyOriginalProviderObservedAfterDemo": "Musixmatch",
+    "currentTrackChangedDuringInspection": true,
+    "latestObservedProvider": "QQ Music",
+    "latestObservedState": "paused",
+    "latestObservedPositionSeconds": 59,
+    "latestObservedDurationSeconds": 246,
+    "realPlaybackControlledByAgent": false,
+    "nativeWindowZoom": {
+      "action": "zoom the window, exposed by the system window button",
+      "logicalSizePointsBefore": [900, 660],
+      "logicalSizePointsZoomed": [1728, 1021],
+      "logicalSizePointsRestored": [900, 660],
+      "screenshotPixelsBefore": [1800, 1320],
+      "screenshotPixelsZoomed": [3456, 2042],
+      "screenshotPixelsRestored": [1800, 1320],
+      "coverLyricsProgressAndToolbarVisibleWhenZoomed": true
+    },
+    "installedAppEntryWindowVisible": true,
+    "finalNormalWindowFullyVisibleWithNativeToolbar": true,
+    "anotherMainWindowObservedAfterClosingOne": true,
+    "allMainWindowsClosedProven": false,
+    "lastWindowRecreationProven": false,
+    "onlyOneInstalledAppProcessObserved": true
   },
   "preservedPreferences": {
     "glassStrength": 0.4,
@@ -68,11 +100,13 @@
     "relayEnabled": false
   },
   "pendingFinalChecks": [
-    "compact window and main-window reopen in 0.1.9",
-    "close system Window menu after UI-tool targeting failure",
-    "return from demo to real Spotify"
+    "independent 480 x 740 compact-window check in 0.1.9",
+    "independent recreation after closing the last main window in 0.1.9"
   ],
   "validationLimits": {
+    "compactWindow019Rechecked": false,
+    "lastMainWindowRecreation019": false,
+    "ineffectiveResizeDragOrCloseAllShortcutCountedAsPass": false,
     "iOSPhysicalDevice": false,
     "APNsDelivery": false,
     "olderOSFallbackRuntime": false,

@@ -12,7 +12,7 @@ GitHub 仓库：[hhhoratioxu/VerseDock](https://github.com/hhhoratioxu/VerseDock
 
 当前版本为 [v0.1.9-apple-style](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.9-apple-style)：按 Apple 原生交互改版，使用系统工具栏、Mac 独立设置窗口及 iOS 分类导航；取消整窗宽玻璃条，使用更克制的中性控件和留白。保留随封面变化的流动背景和可调玻璃强度。保留已在本机验证的 Spotify 原词优先、无词备用、点击跳转、Dock 与状态栏入口。原创图标见 [Artwork](Artwork/README.md)。
 
-0.1.9 修正默认封面放大后发虚，Mac 与 iOS 均复用项目原有的 1024 像素图标。两端构建通过，Mac 已在本机安装并完成主窗口、四页设置、快捷键、上下双语与玻璃强度的实际检查；最后的系统窗口缩放与恢复检查仍受界面工具菜单定位问题影响。详见 [验收记录](docs/VERIFICATION.zh-CN.md)。
+0.1.9 修正默认封面放大后发虚，Mac 与 iOS 均复用项目原有的 1024 像素图标。两端构建通过，Mac 已在本机安装并完成主窗口、四页设置、快捷键、上下双语与玻璃强度的实际检查。后续已检查系统窗口放大与还原，并退出原创演示、恢复真实 Spotify 歌词。紧凑窗口等专项的版本范围见 [验收记录](docs/VERIFICATION.zh-CN.md)；后续只更新验收文档，发布包仍对应原始版本提交。
 
 下载 `VerseDock-macOS-arm64.zip` 并解压，将 `VerseDock.app` 放进“应用程序”后双击。运行时显示 Dock 图标，点击 Dock 可重新打开歌词主窗口；关闭主窗口后状态栏歌词仍然继续。本地自行构建的产物位于 `build/VerseDock.app`，也可以在项目目录执行：
 
