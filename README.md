@@ -10,7 +10,7 @@
 
 GitHub 仓库：[hhhoratioxu/VerseDock](https://github.com/hhhoratioxu/VerseDock)。打包的 Mac App 在 [Releases](https://github.com/hhhoratioxu/VerseDock/releases) 中提供；源码、Xcode 工程和安装说明直接保存在仓库内。
 
-当前版本为 [v0.1.5-liquid-glass](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.5-liquid-glass)：原生 Liquid Glass 控件与悬浮窗、柔和歌词过渡、可关闭动效，以及更简洁的歌词界面。保留已在本机验证的 Spotify 原词优先、无词备用、点击跳转、Dock 与状态栏入口。原创图标见 [Artwork](Artwork/README.md)。
+当前版本为 [v0.1.6-ambient-glass](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.6-ambient-glass)：随封面配色的柔和流动背景、可调 Liquid Glass 强度与独立背景浓度，设置实时预览并自动保存。保留已在本机验证的 Spotify 原词优先、无词备用、点击跳转、Dock 与状态栏入口。原创图标见 [Artwork](Artwork/README.md)。
 
 下载 `VerseDock-macOS-arm64.zip` 并解压，将 `VerseDock.app` 放进“应用程序”后双击。运行时显示 Dock 图标，点击 Dock 可重新打开歌词主窗口；关闭主窗口后状态栏歌词仍然继续。本地自行构建的产物位于 `build/VerseDock.app`，也可以在项目目录执行：
 
@@ -49,6 +49,10 @@ macOS 26 / iOS、iPadOS 26 及以上使用系统原生 Liquid Glass：工具栏�
 
 当前句柔和提亮、轻微缩放并跟随滚动，边缘歌词渐隐；封面切换、悬停和按钮按压有轻量反馈，悬浮窗淡入淡出并在切句时过渡。播放指示只表示播放状态，不声称分析实际音频。来源与翻译详情、每首歌的时间校准可以从底部打开，设置中的接入说明折叠显示。
 
+背景从当前专辑封面在本机提取主色，使用缓慢移动的柔和渐变；切换封面时淡入新的配色。无可用封面或读取失败时使用中性色，不伪造专辑主色。不会向歌词服务或其他分析服务上传封面。背景只渲染颜色，不影响歌词时序或播放。
+
+「设置 → 外观与交互」提供实时预览：「Liquid Glass 强度」从最通透到色调最浓，调整原生玻璃变体与色调，不降低文字透明度；「背景色彩浓度」独立控制封面色彩，另有「专辑封面背景」「背景柔和流动」开关。新设置默认玻璃 40%、背景 65%、封面背景与流动开启，调整立即自动保存。玻璃强度应用到 App 的自定义玻璃控件和 Mac 悬浮窗，不修改系统全局外观。
+
 在「设置 → 外观与交互 → 界面动效」选择开关，默认开启并自动保存；关闭或系统启用“减少动态效果”时停止自定义运动效果。系统启用“减少透明度”时使用实色背景。状态栏滚动是独立的旧设置，升级不会把静态歌词改成滚动。Mac 本地界面实际检查记录见 [验收说明](docs/VERIFICATION.zh-CN.md)；iPhone/iPad 的新界面已编译，仍待真机检查。
 
 ## 歌词原词与翻译
@@ -65,7 +69,7 @@ macOS 26 / iOS、iPadOS 26 及以上使用系统原生 Liquid Glass：工具栏�
 
 ## iPhone/iPad 构建与灵动岛
 
-已经提供 [iPhone/iPad 待签名 IPA](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.5-liquid-glass)。下载 `VerseDock-iOS-unsigned.ipa`，使用自己的 Apple 签名身份重新签名安装。包内保留灵动岛/锁屏扩展，最低 iOS/iPadOS 17；本次已完成标准 Xcode 设备构建，但尚未签名或真机验收。详细说明见 [docs/IPA.zh-CN.md](docs/IPA.zh-CN.md)。
+已经提供 [iPhone/iPad 待签名 IPA](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.6-ambient-glass)。下载 `VerseDock-iOS-unsigned.ipa`，使用自己的 Apple 签名身份重新签名安装。包内保留灵动岛/锁屏扩展，最低 iOS/iPadOS 17；本次已完成标准 Xcode 设备构建，但尚未签名或真机验收。详细说明见 [docs/IPA.zh-CN.md](docs/IPA.zh-CN.md)。
 
 打开 `VerseDock.xcodeproj`，选择 `VerseDock` scheme。选择你的 Apple 开发者 Team 和设备。部署目标 iOS/iPadOS 17；灵动岛要求具备相应硬件的 iPhone。开启 App 中的实时活动按钮后，系统管理灵动岛和锁屏显示。
 

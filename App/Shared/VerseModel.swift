@@ -6,7 +6,10 @@ import AppKit
 
 @MainActor final class VerseModel: ObservableObject {
     static let shared = VerseModel()
-    @Published var snapshot: PlaybackSnapshot?
+    let albumAppearance = VerseAlbumAppearance()
+    @Published var snapshot: PlaybackSnapshot? {
+        didSet { albumAppearance.update(snapshot?.track.artworkURL) }
+    }
     @Published var lyrics: LyricDocument? { didSet { resetTranslation() } }
     @Published var progress: Double = 0
     @Published var activeIndex: Int?
@@ -118,6 +121,18 @@ import AppKit
     }
     @Published var interfaceMotionEnabled = UserDefaults.standard.object(forKey: "interfaceMotionEnabled") as? Bool ?? true {
         didSet { UserDefaults.standard.set(interfaceMotionEnabled, forKey: "interfaceMotionEnabled") }
+    }
+    @Published var glassStrength = VerseAppearanceSettings.unit("glassStrength", default: 0.4) {
+        didSet { UserDefaults.standard.set(glassStrength, forKey: "glassStrength") }
+    }
+    @Published var albumBackgroundStrength = VerseAppearanceSettings.unit("albumBackgroundStrength", default: 0.65) {
+        didSet { UserDefaults.standard.set(albumBackgroundStrength, forKey: "albumBackgroundStrength") }
+    }
+    @Published var albumBackgroundEnabled = UserDefaults.standard.object(forKey: "albumBackgroundEnabled") as? Bool ?? true {
+        didSet { UserDefaults.standard.set(albumBackgroundEnabled, forKey: "albumBackgroundEnabled") }
+    }
+    @Published var albumFlowEnabled = UserDefaults.standard.object(forKey: "albumFlowEnabled") as? Bool ?? true {
+        didSet { UserDefaults.standard.set(albumFlowEnabled, forKey: "albumFlowEnabled") }
     }
     @Published private(set) var menuText = "VerseDock"
     @Published private(set) var menuTranslation = ""

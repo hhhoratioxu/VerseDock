@@ -85,9 +85,14 @@ private final class FloatingLyricsWindow: NSWindow {
 
 struct OverlayView: View {
     @ObservedObject var model: VerseModel
+    @ObservedObject private var appearance: VerseAlbumAppearance
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var hovered = false
     private var motion: Bool { model.interfaceMotionEnabled && !reduceMotion }
+    init(model: VerseModel) {
+        self.model = model
+        self.appearance = model.albumAppearance
+    }
     var body: some View {
         VStack(spacing: 7) {
             ZStack {
@@ -107,8 +112,10 @@ struct OverlayView: View {
         }
         .padding(.horizontal, 22).padding(.vertical, 16)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .modifier(VerseGlassSurface(cornerRadius: 22, tint: .black.opacity(0.12), interactive: false))
+        .modifier(VerseGlassSurface(cornerRadius: 22, interactive: false, scrim: 0.28))
         .environment(\.verseMotionEnabled, model.interfaceMotionEnabled)
+        .environment(\.verseGlassStrength, model.glassStrength)
+        .environment(\.verseGlassColor, model.albumBackgroundEnabled ? appearance.palette.tint : VerseAlbumPalette.neutral.tint)
         .overlay(alignment: .topLeading) {
             Image(systemName: "circle.grid.2x2.fill").font(.system(size: 9))
                 .foregroundStyle(.white.opacity(hovered ? 0.4 : 0)).padding(11)

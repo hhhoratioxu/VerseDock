@@ -12,6 +12,7 @@ enum VerseTheme {
 
 struct ContentView: View {
     @ObservedObject var model: VerseModel
+    @ObservedObject private var albumAppearance: VerseAlbumAppearance
     @State private var settings = false
     @State private var importing = false
     @State private var follow = true
@@ -21,6 +22,10 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var phase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private var motion: Bool { model.interfaceMotionEnabled && !reduceMotion }
+    init(model: VerseModel) {
+        self.model = model
+        self.albumAppearance = model.albumAppearance
+    }
     private var brandMark: Image {
         #if os(macOS)
         if let url = Bundle.main.url(forResource: "BrandMark", withExtension: "png"),
@@ -40,11 +45,16 @@ struct ContentView: View {
         }
         .frame(maxWidth: 780)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background { VerseListeningBackground(artwork: model.snapshot?.track.artworkURL).ignoresSafeArea() }
+        .background {
+            VerseListeningBackground(palette: albumAppearance.palette, strength: model.albumBackgroundStrength,
+                enabled: model.albumBackgroundEnabled, flowing: model.albumFlowEnabled).ignoresSafeArea()
+        }
         .foregroundStyle(.white)
         .tint(VerseTheme.accent)
         .preferredColorScheme(.dark)
         .environment(\.verseMotionEnabled, model.interfaceMotionEnabled)
+        .environment(\.verseGlassStrength, model.glassStrength)
+        .environment(\.verseGlassColor, model.albumBackgroundEnabled ? albumAppearance.palette.tint : VerseAlbumPalette.neutral.tint)
         .opacity(appeared ? 1 : 0)
         .offset(y: appeared || !motion ? 0 : 5)
         .modifier(LyricTranslationHost(model: model))
@@ -306,8 +316,35 @@ struct SettingsView: View {
                         Text("当前系统使用磨砂材质，升级至 macOS / iOS 26 后启用 Liquid Glass。")
                             .font(.caption).foregroundStyle(.secondary)
                     }
+                    VerseAppearancePreview(model: model, appearance: model.albumAppearance)
+                    VStack(alignment: .leading, spacing: 7) {
+                        HStack {
+                            Text("Liquid Glass 强度")
+                            Spacer()
+                            Text(model.glassStrength.formatted(.percent.precision(.fractionLength(0))))
+                                .foregroundStyle(.secondary).monospacedDigit()
+                        }
+                        Slider(value: $model.glassStrength, in: 0...1) { Text("Liquid Glass 强度") }.labelsHidden()
+                            .accessibilityIdentifier("glass-strength")
+                        HStack { Text("最通透"); Spacer(); Text("色调最浓") }
+                            .font(.caption).foregroundStyle(.secondary)
+                    }.disabled(reduceTransparency)
+                    Toggle("专辑封面背景", isOn: $model.albumBackgroundEnabled)
+                    VStack(alignment: .leading, spacing: 7) {
+                        HStack {
+                            Text("背景色彩浓度")
+                            Spacer()
+                            Text(model.albumBackgroundStrength.formatted(.percent.precision(.fractionLength(0))))
+                                .foregroundStyle(.secondary).monospacedDigit()
+                        }
+                        Slider(value: $model.albumBackgroundStrength, in: 0...1) { Text("背景色彩浓度") }.labelsHidden()
+                            .accessibilityIdentifier("album-background-strength")
+                        HStack { Text("淡"); Spacer(); Text("浓") }.font(.caption).foregroundStyle(.secondary)
+                    }.disabled(!model.albumBackgroundEnabled || reduceTransparency)
+                    Toggle("背景柔和流动", isOn: $model.albumFlowEnabled)
+                        .disabled(!model.albumBackgroundEnabled || !model.interfaceMotionEnabled || reduceMotion || reduceTransparency)
                     Toggle("界面动效", isOn: $model.interfaceMotionEnabled)
-                    Text("歌词过渡、按钮反馈与悬浮窗淡入。会遵循系统的“减少动态效果”设置；关闭后立即切换。")
+                    Text("外观即时生效并自动保存。玻璃强度只调整控件材质与色调，背景浓度单独控制封面配色。关闭动效后背景静止；会遵循系统的“减少动态效果”和“降低透明度”设置。")
                         .font(.caption).foregroundStyle(.secondary)
                     if reduceMotion {
                         Text("系统已开启“减少动态效果”，界面保持静态。")
@@ -396,7 +433,7 @@ struct SettingsView: View {
                     Text(model.relayStatus).font(.caption).foregroundStyle(.secondary)
                 }
                 Section("关于") {
-                    Text("VerseDock 0.1.5 · 原创原生实现")
+                    Text("VerseDock 0.1.6 · 原创原生实现")
                     Text("独立 Spotify 歌词伴侣。应用代码从零编写，无第三方歌词插件或 Spotify 客户端补丁。歌词内容归其权利人所有。")
                         .font(.caption).foregroundStyle(.secondary)
                 }
@@ -410,5 +447,29 @@ struct SettingsView: View {
         #if os(macOS)
         .frame(width: 520, height: 640)
         #endif
+    }
+}
+
+private struct VerseAppearancePreview: View {
+    @ObservedObject var model: VerseModel
+    @ObservedObject var appearance: VerseAlbumAppearance
+    var body: some View {
+        ZStack {
+            VerseListeningBackground(palette: appearance.palette, strength: model.albumBackgroundStrength,
+                enabled: model.albumBackgroundEnabled, flowing: model.albumFlowEnabled)
+            VStack(spacing: 13) {
+                Label("Liquid Glass", systemImage: "music.note")
+                    .font(.system(size: 15, weight: .semibold)).foregroundStyle(.white)
+                    .padding(.horizontal, 22).padding(.vertical, 12)
+                    .modifier(VerseGlassSurface(interactive: false))
+                Text(appearance.loading ? "正在准备封面配色…" :
+                    (appearance.hasArtworkColors ? "配色来自当前专辑封面" : "无可用封面，使用柔和中性色"))
+                    .font(.system(size: 10)).foregroundStyle(.white.opacity(0.7))
+            }
+        }
+        .frame(height: 124).clipShape(RoundedRectangle(cornerRadius: 18))
+        .environment(\.verseMotionEnabled, model.interfaceMotionEnabled)
+        .environment(\.verseGlassStrength, model.glassStrength)
+        .environment(\.verseGlassColor, model.albumBackgroundEnabled ? appearance.palette.tint : VerseAlbumPalette.neutral.tint)
     }
 }

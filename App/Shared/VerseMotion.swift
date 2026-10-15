@@ -6,11 +6,21 @@ import AppKit
 private struct VerseMotionEnabledKey: EnvironmentKey {
     static let defaultValue = true
 }
+private struct VerseGlassStrengthKey: EnvironmentKey { static let defaultValue = 0.4 }
+private struct VerseGlassColorKey: EnvironmentKey { static let defaultValue = VerseAlbumPalette.neutral.tint }
 
 extension EnvironmentValues {
     var verseMotionEnabled: Bool {
         get { self[VerseMotionEnabledKey.self] }
         set { self[VerseMotionEnabledKey.self] = newValue }
+    }
+    var verseGlassStrength: Double {
+        get { self[VerseGlassStrengthKey.self] }
+        set { self[VerseGlassStrengthKey.self] = newValue }
+    }
+    var verseGlassColor: Color {
+        get { self[VerseGlassColorKey.self] }
+        set { self[VerseGlassColorKey.self] = newValue }
     }
 }
 
@@ -18,18 +28,25 @@ struct VerseGlassSurface: ViewModifier {
     var cornerRadius: CGFloat = 18
     var tint: Color? = nil
     var interactive = true
+    var scrim = 0.12
     @Environment(\.verseMotionEnabled) private var motion
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.verseGlassStrength) private var strength
+    @Environment(\.verseGlassColor) private var albumColor
     @ViewBuilder func body(content: Content) -> some View {
         if reduceTransparency {
             content.background(Color(red: 0.16, green: 0.17, blue: 0.16), in: RoundedRectangle(cornerRadius: cornerRadius))
                 .overlay(RoundedRectangle(cornerRadius: cornerRadius).strokeBorder(.white.opacity(0.18), lineWidth: 0.7))
         } else if #available(macOS 26.0, iOS 26.0, *) {
-            content.glassEffect(.regular.tint(tint).interactive(interactive && motion && !reduceMotion),
+            content.glassEffect((strength < 0.12 ? Glass.clear : Glass.regular)
+                                .tint((tint ?? albumColor).opacity(strength * 0.7))
+                                .interactive(interactive && motion && !reduceMotion),
                                 in: RoundedRectangle(cornerRadius: cornerRadius))
+                .background(.black.opacity(scrim), in: RoundedRectangle(cornerRadius: cornerRadius))
         } else {
             content.background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: cornerRadius))
+                .background((tint ?? albumColor).opacity(strength * 0.45), in: RoundedRectangle(cornerRadius: cornerRadius))
                 .overlay(RoundedRectangle(cornerRadius: cornerRadius).strokeBorder(.white.opacity(0.1), lineWidth: 0.7))
         }
     }
@@ -45,26 +62,28 @@ struct VerseGlassGroup<Content: View>: View {
 }
 
 struct VerseListeningBackground: View {
-    let artwork: URL?
+    let palette: VerseAlbumPalette
+    var strength = 0.65
+    var enabled = true
+    var flowing = true
+    @Environment(\.verseMotionEnabled) private var motion
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    private var animate: Bool { motion && !reduceMotion && !reduceTransparency }
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
+        ZStack {
                 #if os(macOS)
                 if !reduceTransparency { VerseWindowBackdrop() }
                 #endif
-                VerseTheme.ink.opacity(reduceTransparency ? 1 : 0.87)
-                if !reduceTransparency, let artwork, artwork.scheme == "https" {
-                    AsyncImage(url: artwork) { phase in
-                        if let image = phase.image {
-                            image.resizable().scaledToFill()
-                                .frame(width: geometry.size.width, height: geometry.size.height)
-                                .clipped().blur(radius: 65).opacity(0.12)
-                        }
-                    }
+                VerseTheme.ink
+                if !reduceTransparency, enabled, strength > 0 {
+                    ZStack {
+                        VerseAlbumField(palette: palette, strength: strength, flowing: flowing && animate)
+                            .id(palette).transition(.opacity)
+                    }.animation(animate ? .easeInOut(duration: 1.8) : nil, value: palette)
+                    LinearGradient(colors: [.black.opacity(0.42), .black.opacity(0.42), .black.opacity(0.58)],
+                        startPoint: .top, endPoint: .bottom)
                 }
-                LinearGradient(colors: [.clear, VerseTheme.ink.opacity(0.65)], startPoint: .top, endPoint: .bottom)
-            }
         }.clipped().allowsHitTesting(false).accessibilityHidden(true)
     }
 }
@@ -112,10 +131,10 @@ struct VerseControlStyle: ButtonStyle {
         var body: some View {
             configuration.label
                 .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(selected ? VerseTheme.accent : .white.opacity(enabled ? 0.72 : 0.25))
+                .foregroundStyle(selected ? VerseTheme.accent : .white.opacity(enabled ? 0.86 : 0.25))
                 .padding(.horizontal, 11).frame(minWidth: 34, minHeight: 34)
                 .background(.white.opacity(hovered ? 0.025 : 0), in: RoundedRectangle(cornerRadius: 18))
-                .modifier(VerseGlassSurface(tint: selected ? VerseTheme.accent.opacity(0.16) : nil))
+                .modifier(VerseGlassSurface(tint: selected ? VerseTheme.accent : nil))
                 .contentShape(RoundedRectangle(cornerRadius: 18))
                 .scaleEffect(!nativeGlass && configuration.isPressed && motion && !reduceMotion ? 0.94 : 1)
                 .animation(motion && !reduceMotion ? .easeOut(duration: 0.16) : nil, value: configuration.isPressed)

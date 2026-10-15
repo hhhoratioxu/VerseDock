@@ -1,0 +1,180 @@
+{
+  "date": "2026-10-15",
+  "appVersion": "0.1.6 (7)",
+  "implementation": {
+    "originalCode": true,
+    "thirdPartyUIPackages": false,
+    "coverColorExtraction": "local 32-pixel sRGB thumbnail and weighted color populations",
+    "uploadsForColorAnalysis": false,
+    "maximumPaletteCacheEntries": 12,
+    "oldCoverRequestCancellationAndURLGuardImplemented": true,
+    "coverTransitionSeconds": 1.8,
+    "backgroundFrameRateCap": 20,
+    "backgroundMotionPausesOutsideActiveScene": true,
+    "systemReduceMotionAndTransparencyRespectedInCode": true,
+    "systemAccessibilityPreferencesChangedByAgent": false,
+    "glassUsesNativeClearOrRegularWithTint": true,
+    "glassStrengthDoesNotFadeForegroundText": true
+  },
+  "macRuntime": {
+    "installedCopyLaunched": true,
+    "strictSignatureVerified": true,
+    "currentSpotifyCoverColorsLoaded": true,
+    "currentTrackObserved": "那页夏天 / 王俊凱",
+    "previewIdentifiedActualCover": true,
+    "flowingPreviewObservedAcrossSeparateFrames": true,
+    "flowOffPreviewObservedStaticAcrossSeparateFrames": true,
+    "glassEndpointsObserved": [
+      0,
+      1
+    ],
+    "backgroundEndpointsObserved": [
+      0,
+      1
+    ],
+    "slidersIndependent": true,
+    "continuousSliderLayoutVisuallyInspected": true,
+    "restartPersistence": {
+      "glassStrength": 0.73,
+      "backgroundStrength": 0.81,
+      "flowEnabled": false,
+      "verified": true
+    },
+    "noArtworkDemoFallbackObserved": true,
+    "returnToRealCoverObserved": true,
+    "overlayOpenedWithSharedAppearance": true,
+    "overlayHiddenAgain": true,
+    "settingsSavedWithoutUnrelatedKeychainAlert": true,
+    "agentChangedRealSpotifyPlaybackForValidation": false,
+    "finalAppearance": {
+      "glassStrength": 0.4,
+      "backgroundStrength": 0.65,
+      "albumBackgroundEnabled": true,
+      "albumFlowEnabled": true,
+      "interfaceMotionEnabled": true
+    },
+    "preservedPreferences": {
+      "preferSpotifyOriginalLyrics": true,
+      "backupProvider": "automatic",
+      "translationEnabled": true,
+      "translationTarget": "English",
+      "menuCharacters": 18,
+      "menuScrolling": false,
+      "overlayVisible": false,
+      "overlayFont": 28
+    },
+    "actualScreenshotRetainedLocally": "build/ui-ambient-settings-0.1.6.png"
+  },
+  "colorExtractionInspection": {
+    "solidColorHuesPreserved": [
+      "red",
+      "green",
+      "blue"
+    ],
+    "grayRemainsAchromatic": true,
+    "malformedImageRejected": true,
+    "samples": {
+      "blue": [
+        [
+          0.015686274509803873,
+          0.20000000000000073,
+          1
+        ],
+        [
+          0.015686274509803873,
+          0.20000000000000073,
+          1
+        ],
+        [
+          0.015686274509803873,
+          0.20000000000000073,
+          1
+        ]
+      ],
+      "gray": [
+        [
+          0.5725490196078439,
+          0.5725490196078439,
+          0.5725490196078439
+        ],
+        [
+          0.5725490196078439,
+          0.5725490196078439,
+          0.5725490196078439
+        ],
+        [
+          0.5725490196078439,
+          0.5725490196078439,
+          0.5725490196078439
+        ]
+      ],
+      "green": [
+        [
+          0,
+          0.9764705882352889,
+          0
+        ],
+        [
+          0,
+          0.9764705882352889,
+          0
+        ],
+        [
+          0,
+          0.9764705882352889,
+          0
+        ]
+      ],
+      "malformedImageRejected": true,
+      "originalIcon": [
+        [
+          0.04776365613166858,
+          0.08014846473962461,
+          0.10641472650245605
+        ],
+        [
+          0.3128851540616247,
+          0.815966386554622,
+          0.5879551820728289
+        ],
+        [
+          0.5739495798319326,
+          0.9546218487394958,
+          0.661624649859944
+        ]
+      ],
+      "red": [
+        [
+          1,
+          0.1490196078431369,
+          0
+        ],
+        [
+          1,
+          0.1490196078431369,
+          0
+        ],
+        [
+          1,
+          0.1490196078431369,
+          0
+        ]
+      ]
+    },
+    "method": "same compiled extraction implementation; generated local PNGs and original bundled icon"
+  },
+  "builds": {
+    "macOSarm64": "optimized build passed, minimum macOS 14",
+    "iOSDeviceAppAndWidget": "standard Release device build passed, unsigned, minimum iOS 17"
+  },
+  "validationLimits": {
+    "iOSPhysicalDeviceUI": false,
+    "APNsDelivery": false,
+    "olderOSFallbackRuntime": false,
+    "systemAccessibilityTogglesRuntimeTested": false,
+    "twoDistinctRealSpotifyCoversInThisRelease": false,
+    "HTTPFailureAndSlowCoverRaceRuntimeInjected": false,
+    "coreAndBridgeTests": "prior 0.1.3 executed evidence retained; no lyric policy changes"
+  },
+  "privacy": "No commercial lyric bodies, album image files, credentials, cookies, account profiles or signing material included."
+}
