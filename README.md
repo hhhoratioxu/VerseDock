@@ -1,5 +1,7 @@
 # VerseDock
 
+**简体中文** · [English](README.en.md)
+
 <img src="Artwork/VerseDock-Icon-1024.png" alt="VerseDock 图标" width="128">
 
 原创 Swift 原生 Spotify 歌词伴侣。macOS：菜单栏歌词、可拖动的悬浮歌词、完整歌词窗口。iPhone：完整歌词、灵动岛、锁屏实时活动。iPad：完整歌词、锁屏实时活动；iPad 没有灵动岛硬件。

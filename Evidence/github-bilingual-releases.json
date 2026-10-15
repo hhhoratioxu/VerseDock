@@ -1,0 +1,155 @@
+{
+  "checkedAtUTC": "2026-10-15T15:00:35.364834+00:00",
+  "repository": "hhhoratioxu/VerseDock",
+  "publishedReleases": 11,
+  "uploadedAssets": 73,
+  "results": [
+    {
+      "tag": "v0.1.9-apple-style",
+      "url": "https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.9-apple-style",
+      "bilingualTitleAndFullBodyMatch": true,
+      "originalChinesePreserved": true,
+      "releaseFlagsAndTagUnchanged": true,
+      "assetIdsNamesSizesDigestsAndUrlsUnchanged": true,
+      "assets": 7
+    },
+    {
+      "tag": "v0.1.8-apple-style",
+      "url": "https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.8-apple-style",
+      "bilingualTitleAndFullBodyMatch": true,
+      "originalChinesePreserved": true,
+      "releaseFlagsAndTagUnchanged": true,
+      "assetIdsNamesSizesDigestsAndUrlsUnchanged": true,
+      "assets": 7
+    },
+    {
+      "tag": "v0.1.7-design",
+      "url": "https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.7-design",
+      "bilingualTitleAndFullBodyMatch": true,
+      "originalChinesePreserved": true,
+      "releaseFlagsAndTagUnchanged": true,
+      "assetIdsNamesSizesDigestsAndUrlsUnchanged": true,
+      "assets": 7
+    },
+    {
+      "tag": "v0.1.6-ambient-glass",
+      "url": "https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.6-ambient-glass",
+      "bilingualTitleAndFullBodyMatch": true,
+      "originalChinesePreserved": true,
+      "releaseFlagsAndTagUnchanged": true,
+      "assetIdsNamesSizesDigestsAndUrlsUnchanged": true,
+      "assets": 7
+    },
+    {
+      "tag": "v0.1.5-liquid-glass",
+      "url": "https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.5-liquid-glass",
+      "bilingualTitleAndFullBodyMatch": true,
+      "originalChinesePreserved": true,
+      "releaseFlagsAndTagUnchanged": true,
+      "assetIdsNamesSizesDigestsAndUrlsUnchanged": true,
+      "assets": 7
+    },
+    {
+      "tag": "v0.1.4-spotify",
+      "url": "https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.4-spotify",
+      "bilingualTitleAndFullBodyMatch": true,
+      "originalChinesePreserved": true,
+      "releaseFlagsAndTagUnchanged": true,
+      "assetIdsNamesSizesDigestsAndUrlsUnchanged": true,
+      "assets": 7
+    },
+    {
+      "tag": "v0.1.3-spotify",
+      "url": "https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.3-spotify",
+      "bilingualTitleAndFullBodyMatch": true,
+      "originalChinesePreserved": true,
+      "releaseFlagsAndTagUnchanged": true,
+      "assetIdsNamesSizesDigestsAndUrlsUnchanged": true,
+      "assets": 7
+    },
+    {
+      "tag": "v0.1.2-lyrics",
+      "url": "https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.2-lyrics",
+      "bilingualTitleAndFullBodyMatch": true,
+      "originalChinesePreserved": true,
+      "releaseFlagsAndTagUnchanged": true,
+      "assetIdsNamesSizesDigestsAndUrlsUnchanged": true,
+      "assets": 7
+    },
+    {
+      "tag": "v0.1.1-icons",
+      "url": "https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.1-icons",
+      "bilingualTitleAndFullBodyMatch": true,
+      "originalChinesePreserved": true,
+      "releaseFlagsAndTagUnchanged": true,
+      "assetIdsNamesSizesDigestsAndUrlsUnchanged": true,
+      "assets": 8
+    },
+    {
+      "tag": "v0.1.0-unsigned-ipa",
+      "url": "https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.0-unsigned-ipa",
+      "bilingualTitleAndFullBodyMatch": true,
+      "originalChinesePreserved": true,
+      "releaseFlagsAndTagUnchanged": true,
+      "assetIdsNamesSizesDigestsAndUrlsUnchanged": true,
+      "assets": 6
+    },
+    {
+      "tag": "v0.1.0-preview",
+      "url": "https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.0-preview",
+      "bilingualTitleAndFullBodyMatch": true,
+      "originalChinesePreserved": true,
+      "releaseFlagsAndTagUnchanged": true,
+      "assetIdsNamesSizesDigestsAndUrlsUnchanged": true,
+      "assets": 3
+    }
+  ],
+  "documentationPairs": [
+    {
+      "chinese": "README.md",
+      "english": "README.en.md",
+      "sameHeadingCount": 15,
+      "sameTableLineCount": 14
+    },
+    {
+      "chinese": "Artwork/README.md",
+      "english": "Artwork/README.en.md",
+      "sameHeadingCount": 3,
+      "sameTableLineCount": 0
+    },
+    {
+      "chinese": "docs/IPA.zh-CN.md",
+      "english": "docs/IPA.en.md",
+      "sameHeadingCount": 5,
+      "sameTableLineCount": 0
+    },
+    {
+      "chinese": "docs/LYRICS.zh-CN.md",
+      "english": "docs/LYRICS.en.md",
+      "sameHeadingCount": 7,
+      "sameTableLineCount": 0
+    },
+    {
+      "chinese": "docs/SETUP.zh-CN.md",
+      "english": "docs/SETUP.en.md",
+      "sameHeadingCount": 8,
+      "sameTableLineCount": 10
+    },
+    {
+      "chinese": "docs/VERIFICATION.zh-CN.md",
+      "english": "docs/VERIFICATION.en.md",
+      "sameHeadingCount": 13,
+      "sameTableLineCount": 116
+    }
+  ],
+  "documentationChecks": {
+    "localRelativeLinksResolve": true,
+    "pairedHeadingAndTableCountsMatch": true,
+    "languageSwitchesPresent": true,
+    "onlyDocumentationAndReleaseMetadataChanged": true
+  },
+  "note": {
+    "zh-CN": "全部已发布版本采用中文在前、英文在后的完整说明和双语下载表；历史验收状态保留。安装包、源码附件与发布标签未改动。",
+    "en": "All published releases use full Chinese-then-English notes and bilingual download tables. Historical verification status is retained. App packages, source attachments and release tags are unchanged."
+  }
+}

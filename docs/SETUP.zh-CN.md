@@ -1,5 +1,7 @@
 # VerseDock 安装与配置
 
+**简体中文** · [English](SETUP.en.md)
+
 ## Mac
 
 1. 下载并解压 Mac ZIP，将 `VerseDock.app` 放进“应用程序”后双击；自行构建则运行 `build/VerseDock.app`。运行时显示 Dock 图标，点击 Dock 可重新打开主窗口。

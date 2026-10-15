@@ -1,5 +1,7 @@
 # VerseDock 图标
 
+**简体中文** · [English](README.en.md)
+
 ![VerseDock icon](VerseDock-Icon-1024.png)
 
 图标由本次内置 imagegen 生成。主题是浅绿到薄荷色的立体 V，内侧两条圆角线代表歌词，背景沿用 App 的深色调；没有使用 Spotify 标志或下载其他应用的图标。
@@ -9,7 +11,7 @@
 - `VerseDock-Icon-1024.png`：1024 × 1024、不透明、sRGB 主图。
 - `../App/Resources/AppIcon.icns`：macOS 图标，包含多尺寸和透明圆角外缘。
 - `../App/Resources/Assets.xcassets/AppIcon.appiconset`：iPhone/iPad 的 AppIcon，由 Xcode 生成系统所需尺寸。
-- `../App/Resources/BrandMark.png` 与 `BrandMark.imageset`：App 顶部使用的 128 像素图。
+- `../App/Resources/BrandMark.png` 与 `BrandMark.imageset`：App 内使用的品牌图，0.1.9 起复用 1024 像素原图，避免放大模糊。
 
 Mac 与 iOS 共享同一幅主图。导出仅做尺寸、颜色空间、透明通道和平台图标外缘处理，不改动主图内容。重新导出可执行 `xcrun swift scripts/export-icons.swift "$PWD"`。
 
