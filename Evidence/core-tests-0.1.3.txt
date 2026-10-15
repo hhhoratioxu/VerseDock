@@ -1,0 +1,105 @@
+Test Suite 'All tests' started at 2026-10-15 12:53:41.607.
+Test Suite 'VerseCoreTests.xctest' started at 2026-10-15 12:53:41.608.
+Test Suite 'LyricTranslationTests' started at 2026-10-15 12:53:41.608.
+Test Case '-[VerseCoreTests.LyricTranslationTests testPlainLyricsKeepRowBoundariesAndSkipEmptyOrMusicalRows]' started.
+Test Case '-[VerseCoreTests.LyricTranslationTests testPlainLyricsKeepRowBoundariesAndSkipEmptyOrMusicalRows]' passed (0.001 seconds).
+Test Case '-[VerseCoreTests.LyricTranslationTests testRepeatedLinesShareTranslationWithoutChangingOriginalTiming]' started.
+Test Case '-[VerseCoreTests.LyricTranslationTests testRepeatedLinesShareTranslationWithoutChangingOriginalTiming]' passed (0.000 seconds).
+Test Suite 'LyricTranslationTests' passed at 2026-10-15 12:53:41.609.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'LyricsClientTests' started at 2026-10-15 12:53:41.609.
+Test Case '-[VerseCoreTests.LyricsClientTests testCancellationStopsBeforeAnotherSourceIsContacted]' started.
+Test Case '-[VerseCoreTests.LyricsClientTests testCancellationStopsBeforeAnotherSourceIsContacted]' passed (0.013 seconds).
+Test Case '-[VerseCoreTests.LyricsClientTests testMalformedSourceDoesNotStopPlainTextFallback]' started.
+Test Case '-[VerseCoreTests.LyricsClientTests testMalformedSourceDoesNotStopPlainTextFallback]' passed (0.002 seconds).
+Test Case '-[VerseCoreTests.LyricsClientTests testManualSourceChoiceDoesNotContactUnselectedProviders]' started.
+Test Case '-[VerseCoreTests.LyricsClientTests testManualSourceChoiceDoesNotContactUnselectedProviders]' passed (0.001 seconds).
+Test Case '-[VerseCoreTests.LyricsClientTests testMarqueeScrollsWrapsAndPreservesGraphemes]' started.
+Test Case '-[VerseCoreTests.LyricsClientTests testMarqueeScrollsWrapsAndPreservesGraphemes]' passed (0.000 seconds).
+Test Case '-[VerseCoreTests.LyricsClientTests testMatchingRejectsCoverLiveRemixAndLongerEdit]' started.
+Test Case '-[VerseCoreTests.LyricsClientTests testMatchingRejectsCoverLiveRemixAndLongerEdit]' passed (0.001 seconds).
+Test Case '-[VerseCoreTests.LyricsClientTests testNetEaseMissingLyricsDoesNotMislabelSongAsInstrumental]' started.
+Test Case '-[VerseCoreTests.LyricsClientTests testNetEaseMissingLyricsDoesNotMislabelSongAsInstrumental]' passed (0.628 seconds).
+Test Case '-[VerseCoreTests.LyricsClientTests testNetEaseServiceFailureFallsThrough]' started.
+Test Case '-[VerseCoreTests.LyricsClientTests testNetEaseServiceFailureFallsThrough]' passed (0.002 seconds).
+Test Case '-[VerseCoreTests.LyricsClientTests testNetEaseUsesVerifiedArtistAliasesAndRejectsCovers]' started.
+Test Case '-[VerseCoreTests.LyricsClientTests testNetEaseUsesVerifiedArtistAliasesAndRejectsCovers]' passed (0.314 seconds).
+Test Case '-[VerseCoreTests.LyricsClientTests testNotFoundAcrossSourcesIsNotAnOutage]' started.
+Test Case '-[VerseCoreTests.LyricsClientTests testNotFoundAcrossSourcesIsNotAnOutage]' passed (0.621 seconds).
+Test Case '-[VerseCoreTests.LyricsClientTests testOldCachedDocumentsRemainDecodable]' started.
+Test Case '-[VerseCoreTests.LyricsClientTests testOldCachedDocumentsRemainDecodable]' passed (0.001 seconds).
+Test Case '-[VerseCoreTests.LyricsClientTests testOVHPathSegmentsCannotInjectQueryOrFragment]' started.
+Test Case '-[VerseCoreTests.LyricsClientTests testOVHPathSegmentsCannotInjectQueryOrFragment]' passed (0.001 seconds).
+Test Case '-[VerseCoreTests.LyricsClientTests testPlainLRCLIBContinuesToSynchronizedBackup]' started.
+Test Case '-[VerseCoreTests.LyricsClientTests testPlainLRCLIBContinuesToSynchronizedBackup]' passed (0.303 seconds).
+Test Case '-[VerseCoreTests.LyricsClientTests testRetryAfterRetainedAcrossTracksWhileBackupStillWorks]' started.
+Test Case '-[VerseCoreTests.LyricsClientTests testRetryAfterRetainedAcrossTracksWhileBackupStillWorks]' passed (0.319 seconds).
+Test Case '-[VerseCoreTests.LyricsClientTests testSearchAcceptsTraditionalNamesAndReissueWithVisibleDurationNote]' started.
+Test Case '-[VerseCoreTests.LyricsClientTests testSearchAcceptsTraditionalNamesAndReissueWithVisibleDurationNote]' passed (0.001 seconds).
+Test Case '-[VerseCoreTests.LyricsClientTests testServerFailureFallsThroughToQQWithOptInTranslation]' started.
+Test Case '-[VerseCoreTests.LyricsClientTests testServerFailureFallsThroughToQQWithOptInTranslation]' passed (0.315 seconds).
+Test Case '-[VerseCoreTests.LyricsClientTests testSoundtrackTitleAndVerifiedForeignArtistAlias]' started.
+Test Case '-[VerseCoreTests.LyricsClientTests testSoundtrackTitleAndVerifiedForeignArtistAlias]' passed (0.632 seconds).
+Test Suite 'LyricsClientTests' passed at 2026-10-15 12:53:44.766.
+	 Executed 16 tests, with 0 failures (0 unexpected) in 3.154 (3.157) seconds
+Test Suite 'LyricsTests' started at 2026-10-15 12:53:44.766.
+Test Case '-[VerseCoreTests.LyricsTests testInvalidTimestampsDoNotBecomeLyrics]' started.
+Test Case '-[VerseCoreTests.LyricsTests testInvalidTimestampsDoNotBecomeLyrics]' passed (0.000 seconds).
+Test Case '-[VerseCoreTests.LyricsTests testOffsetAnywhereAndSort]' started.
+Test Case '-[VerseCoreTests.LyricsTests testOffsetAnywhereAndSort]' passed (0.000 seconds).
+Test Case '-[VerseCoreTests.LyricsTests testPlainTextDoesNotInventTiming]' started.
+Test Case '-[VerseCoreTests.LyricsTests testPlainTextDoesNotInventTiming]' passed (0.000 seconds).
+Test Case '-[VerseCoreTests.LyricsTests testPlaybackPauseClampAndReceiptClock]' started.
+Test Case '-[VerseCoreTests.LyricsTests testPlaybackPauseClampAndReceiptClock]' passed (0.000 seconds).
+Test Case '-[VerseCoreTests.LyricsTests testPodcastsAndNullItemsIgnored]' started.
+Test Case '-[VerseCoreTests.LyricsTests testPodcastsAndNullItemsIgnored]' passed (0.001 seconds).
+Test Case '-[VerseCoreTests.LyricsTests testRepeatedTimesAndBilingualGroups]' started.
+Test Case '-[VerseCoreTests.LyricsTests testRepeatedTimesAndBilingualGroups]' passed (0.000 seconds).
+Test Case '-[VerseCoreTests.LyricsTests testTimelineBoundariesSeekAndCalibration]' started.
+Test Case '-[VerseCoreTests.LyricsTests testTimelineBoundariesSeekAndCalibration]' passed (0.000 seconds).
+Test Suite 'LyricsTests' passed at 2026-10-15 12:53:44.769.
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+Test Suite 'OAuthTests' started at 2026-10-15 12:53:44.769.
+Test Case '-[VerseCoreTests.OAuthTests testAuthorizationUsesReadAndSeekScopesAndSecureRedirect]' started.
+Test Case '-[VerseCoreTests.OAuthTests testAuthorizationUsesReadAndSeekScopesAndSecureRedirect]' passed (0.000 seconds).
+Test Case '-[VerseCoreTests.OAuthTests testCallbackRejectsWrongStateDuplicateAndForeignURL]' started.
+Test Case '-[VerseCoreTests.OAuthTests testCallbackRejectsWrongStateDuplicateAndForeignURL]' passed (0.000 seconds).
+Test Case '-[VerseCoreTests.OAuthTests testFormEscapesAmpersandsAndPlus]' started.
+Test Case '-[VerseCoreTests.OAuthTests testFormEscapesAmpersandsAndPlus]' passed (0.000 seconds).
+Test Case '-[VerseCoreTests.OAuthTests testRandomVerifierIsURLSafe]' started.
+Test Case '-[VerseCoreTests.OAuthTests testRandomVerifierIsURLSafe]' passed (0.000 seconds).
+Test Case '-[VerseCoreTests.OAuthTests testRetryAfterAndHTTPFailure]' started.
+Test Case '-[VerseCoreTests.OAuthTests testRetryAfterAndHTTPFailure]' passed (0.000 seconds).
+Test Case '-[VerseCoreTests.OAuthTests testRFC7636ChallengeVector]' started.
+Test Case '-[VerseCoreTests.OAuthTests testRFC7636ChallengeVector]' passed (0.000 seconds).
+Test Suite 'OAuthTests' passed at 2026-10-15 12:53:44.771.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.001 (0.002) seconds
+Test Suite 'SpotifyLyricsTests' started at 2026-10-15 12:53:44.771.
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testCancellingSpotifyStopsBeforeBackup]' started.
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testCancellingSpotifyStopsBeforeBackup]' passed (0.000 seconds).
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testClickInvertsAdjustmentAndProtectsBoundaries]' started.
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testClickInvertsAdjustmentAndProtectsBoundaries]' passed (0.000 seconds).
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testMissingAndMalformedSpotifyDataRemainDifferent]' started.
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testMissingAndMalformedSpotifyDataRemainDifferent]' passed (0.001 seconds).
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testMissingSpotifyUsesOnlySelectedBackup]' started.
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testMissingSpotifyUsesOnlySelectedBackup]' passed (0.001 seconds).
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testSeekRejectsChangedSongWithoutSendingControl]' started.
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testSeekRejectsChangedSongWithoutSendingControl]' passed (0.001 seconds).
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testSeekUsesRealPlayerEndpointAndClampsEndOfSong]' started.
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testSeekUsesRealPlayerEndpointAndClampsEndOfSong]' passed (0.001 seconds).
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testSpotifyAuthorizationFailureIsNotReportedAsNoLyrics]' started.
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testSpotifyAuthorizationFailureIsNotReportedAsNoLyrics]' passed (0.001 seconds).
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testSpotifyOriginalWinsEvenWithManualBackupSelected]' started.
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testSpotifyOriginalWinsEvenWithManualBackupSelected]' passed (0.000 seconds).
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testSpotifyPlainOriginalWinsOverTimedBackup]' started.
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testSpotifyPlainOriginalWinsOverTimedBackup]' passed (0.000 seconds).
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testSpotifyPlainTextHasNoInventedTimeline]' started.
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testSpotifyPlainTextHasNoInventedTimeline]' passed (0.000 seconds).
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testSpotifyResponsePreservesTimedGroupsAndProviderAttribution]' started.
+Test Case '-[VerseCoreTests.SpotifyLyricsTests testSpotifyResponsePreservesTimedGroupsAndProviderAttribution]' passed (0.000 seconds).
+Test Suite 'SpotifyLyricsTests' passed at 2026-10-15 12:53:44.778.
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.006 (0.007) seconds
+Test Suite 'VerseCoreTests.xctest' passed at 2026-10-15 12:53:44.778.
+	 Executed 42 tests, with 0 failures (0 unexpected) in 3.165 (3.171) seconds
+Test Suite 'All tests' passed at 2026-10-15 12:53:44.778.
+	 Executed 42 tests, with 0 failures (0 unexpected) in 3.165 (3.172) seconds

@@ -75,7 +75,9 @@ private struct SystemLyricTranslation: View {
         let revision = model.translationRevision
         let plan = LyricTranslationPlan(document: document)
         guard !plan.units.isEmpty else { configuration = nil; model.translationStatus = "暂无可翻译的歌词"; return }
-        let sample = String(plan.units.prefix(16).map(\.text).joined(separator: "\n").prefix(4000))
+        // Credits at the start of a synchronized lyric often use a different language from the song.
+        let skip = min(8, plan.units.count / 4)
+        let sample = String(plan.units.dropFirst(skip).prefix(24).map(\.text).joined(separator: "\n").prefix(4000))
         let recognizer = NLLanguageRecognizer()
         recognizer.processString(sample)
         guard let detected = model.translationSource == "auto" ? recognizer.dominantLanguage?.rawValue : model.translationSource else {

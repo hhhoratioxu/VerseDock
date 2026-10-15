@@ -1,9 +1,10 @@
 import Foundation
 
 public enum LyricsProvider: String, Codable, CaseIterable, Sendable {
-    case lrclib, qqMusic, netEase, lyricsOVH
+    case spotify, lrclib, qqMusic, netEase, lyricsOVH
+    public static let backupProviders: [LyricsProvider] = [.lrclib, .qqMusic, .netEase, .lyricsOVH]
     public var name: String {
-        switch self { case .lrclib: return "LRCLIB"; case .qqMusic: return "QQ 音乐"; case .netEase: return "网易云音乐"; case .lyricsOVH: return "lyrics.ovh" }
+        switch self { case .spotify: return "Spotify"; case .lrclib: return "LRCLIB"; case .qqMusic: return "QQ 音乐"; case .netEase: return "网易云音乐"; case .lyricsOVH: return "lyrics.ovh" }
     }
 }
 public enum LyricsProviderChoice: String, CaseIterable, Sendable {
@@ -19,7 +20,7 @@ public enum LyricsProviderChoice: String, CaseIterable, Sendable {
     }
     public var providers: [LyricsProvider] {
         switch self {
-        case .automatic: return LyricsProvider.allCases
+        case .automatic: return LyricsProvider.backupProviders
         case .lrclib: return [.lrclib]
         case .qqMusic: return [.qqMusic]
         case .netEase: return [.netEase]
@@ -45,7 +46,7 @@ public actor LyricsClient {
     private var nextRequest: [LyricsProvider: Date] = [:]
     private var cooldown: [LyricsProvider: Date] = [:]
     private var artistAliases: [String: [String]] = [:]
-    public init(session: URLSession = .shared, providers: [LyricsProvider] = LyricsProvider.allCases,
+    public init(session: URLSession = .shared, providers: [LyricsProvider] = LyricsProvider.backupProviders,
                 timeout: TimeInterval = 6) {
         self.session = session; self.providers = providers; self.timeout = timeout
     }
@@ -53,15 +54,20 @@ public actor LyricsClient {
         try await lookup(for: track).document
     }
     public func lookup(for track: Track, providers preferred: [LyricsProvider]? = nil,
+                       spotify: (@Sendable (Track) async throws -> LyricDocument?)? = nil,
                        progress: (@Sendable (String) async -> Void)? = nil) async throws -> LyricsLookup {
         var attempts: [LyricsAttempt] = []
         var plain: LyricDocument?
-        for provider in preferred ?? providers {
+        let order = (spotify == nil ? [] : [LyricsProvider.spotify]) + (preferred ?? providers).filter { $0 != .spotify }
+        for provider in order {
             try Task.checkCancellation()
             await progress?("正在查找歌词 · \(provider.name)")
             do {
                 let document: LyricDocument?
                 switch provider {
+                case .spotify:
+                    guard let spotify else { throw VerseError.message("Spotify 歌词会话尚未连接") }
+                    document = try await spotify(track)
                 case .lrclib: document = try await lrclib(track)
                 case .qqMusic: document = try await qqMusic(track)
                 case .netEase: document = try await netEase(track)
@@ -70,8 +76,9 @@ public actor LyricsClient {
                 if let document {
                     let timed = !document.lines.isEmpty || document.instrumental
                     attempts.append(LyricsAttempt(provider: provider, outcome: timed ? "matched" : "plain",
-                        message: document.instrumental ? "来源标记为纯音乐" : (timed ? "已取得同步歌词" : "只有纯文本，继续寻找同步歌词")))
-                    if timed { return LyricsLookup(document: document, attempts: attempts) }
+                        message: document.instrumental ? "来源标记为纯音乐" : (timed ? "已取得同步歌词" :
+                            (provider == .spotify ? "Spotify 提供纯文本，无同步时间轴" : "只有纯文本，继续寻找同步歌词"))))
+                    if timed || provider == .spotify { return LyricsLookup(document: document, attempts: attempts) }
                     if plain == nil { plain = document }
                 } else {
                     attempts.append(LyricsAttempt(provider: provider, outcome: "notFound", message: "没有匹配的歌词"))
@@ -102,7 +109,7 @@ public actor LyricsClient {
         var request = URLRequest(url: parts.url!)
         request.timeoutInterval = timeout
         request.httpShouldHandleCookies = false
-        request.setValue("VerseDock/0.1.2 (https://github.com/hhhoratioxu/VerseDock)", forHTTPHeaderField: "User-Agent")
+        request.setValue("VerseDock/0.1.3 (https://github.com/hhhoratioxu/VerseDock)", forHTTPHeaderField: "User-Agent")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         if provider == .qqMusic { request.setValue("https://y.qq.com/", forHTTPHeaderField: "Referer") }
         if provider == .netEase { request.setValue("https://music.163.com/", forHTTPHeaderField: "Referer") }

@@ -1,6 +1,6 @@
 # iPhone/iPad 待签名 IPA
 
-GitHub 图标预览版：[v0.1.2-lyrics](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.2-lyrics)。
+GitHub 最新预览版：[v0.1.3-spotify](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.3-spotify)。包含歌词点击跳转、可选 Spotify 网页原词会话和双语显示；设备构建通过，真实账户与真机功能仍待签名后验收。
 
 `VerseDock-iOS-unsigned.ipa` 是从本项目完整编译出的 iOS 设备 App，包含实际的 arm64 主程序和 `VerseDockActivity.appex` 灵动岛/锁屏实时活动扩展。最低 iOS/iPadOS 17，支持 iPhone 和 iPad。它不是模拟器程序，也不是仅把源码改了后缀。
 
@@ -23,6 +23,8 @@ GitHub 图标预览版：[v0.1.2-lyrics](https://github.com/hhhoratioxu/VerseDoc
 3. 主 App 和扩展使用相同 Team；扩展的 Bundle ID 必须保留主 App ID 的前缀关系。若修改主 App ID，也要同步修改扩展 ID，并为两个 bundle 完成匹配的签名。
 4. 签名并安装后，先运行 App 内的原创演示检查显示，再按照 `SETUP.zh-CN.md` 配置 Spotify Client ID 和你自己的 HTTPS 回调地址。
 5. 灵动岛需要有相应硬件的 iPhone；iPad 使用锁屏实时活动。
+
+点击歌词跳转需要官方 Spotify 播放控制权限与 Premium，旧版本账户需重新连接以增加 `user-modify-playback-state`。可选原词会话则在设置里的 Spotify 官方网页单独登录，使用非公开接口，不能承诺每个账户或地区都可用。两种授权互不替代；不会要求在聊天或 GitHub 中提供密码、Cookie 或令牌。
 
 普通账号或签名工具不一定保留所有 capability。前台歌词和本地实时活动不依赖后台 APNs，但远程推送桥需要签名配置允许 Push Notifications，且正确配置 `aps-environment`、服务端 APNs 密钥和相同的主 App Bundle ID。包已包含相关实现，不代表个人签名后一定能使用后台推送。
 

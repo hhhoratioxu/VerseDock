@@ -35,7 +35,7 @@ public enum OAuthPKCE {
         else { throw VerseError.message("请设置 Client ID 和有效的 HTTPS 回调地址") }
         var url = URLComponents(string: "https://accounts.spotify.com/authorize")!
         url.queryItems = ["response_type": "code", "client_id": clientID,
-            "redirect_uri": redirect.absoluteString, "scope": "user-read-currently-playing",
+            "redirect_uri": redirect.absoluteString, "scope": "user-read-currently-playing user-modify-playback-state",
             "code_challenge_method": "S256", "code_challenge": challenge(for: verifier), "state": state]
             .map { URLQueryItem(name: $0.key, value: $0.value) }
         return url.url!
@@ -108,6 +108,19 @@ public struct SpotifyAPI: Sendable {
         try Self.validate(response)
         if (response as? HTTPURLResponse)?.statusCode == 204 { return nil }
         return try JSONDecoder().decode(SpotifyEnvelope.self, from: data).snapshot()
+    }
+    public func seek(to position: Double, track: Track, accessToken: String) async throws {
+        let milliseconds = try PlaybackSeeking.milliseconds(position, duration: track.duration)
+        guard let current = try await currentlyPlaying(accessToken: accessToken), current.track.id == track.id else {
+            throw VerseError.message("歌曲已经变化，请点击当前歌曲的歌词")
+        }
+        var parts = URLComponents(string: "https://api.spotify.com/v1/me/player/seek")!
+        parts.queryItems = [URLQueryItem(name: "position_ms", value: String(milliseconds))]
+        var request = URLRequest(url: parts.url!)
+        request.httpMethod = "PUT"; request.timeoutInterval = 10
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        let (_, response) = try await session.data(for: request)
+        try Self.validate(response)
     }
     public static func validate(_ response: URLResponse) throws {
         guard let http = response as? HTTPURLResponse else { throw VerseError.message("无效的网络响应") }

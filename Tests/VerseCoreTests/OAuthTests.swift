@@ -19,10 +19,10 @@ final class OAuthTests: XCTestCase {
         }
         XCTAssertThrowsError(try OAuthPKCE.callbackCode(URL(string: "versedock://oauth?error=access_denied&state=ok")!, expectedState: "ok"))
     }
-    func testAuthorizationUsesOnlyReadScopeAndSecureRedirect() throws {
+    func testAuthorizationUsesReadAndSeekScopesAndSecureRedirect() throws {
         let url = try OAuthPKCE.authorizeURL(clientID: "client", redirect: URL(string: "https://example.com/callback.html")!, verifier: "test", state: "random")
         let items = URLComponents(url: url, resolvingAgainstBaseURL: false)!.queryItems!
-        XCTAssertEqual(items.first(where: { $0.name == "scope" })?.value, "user-read-currently-playing")
+        XCTAssertEqual(items.first(where: { $0.name == "scope" })?.value, "user-read-currently-playing user-modify-playback-state")
         XCTAssertEqual(items.first(where: { $0.name == "code_challenge_method" })?.value, "S256")
         XCTAssertThrowsError(try OAuthPKCE.authorizeURL(clientID: "client", redirect: URL(string: "http://example.com/callback")!, verifier: "test", state: "random"))
     }

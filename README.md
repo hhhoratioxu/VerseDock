@@ -4,15 +4,15 @@
 
 原创 Swift 原生 Spotify 歌词伴侣。macOS：菜单栏歌词、可拖动的悬浮歌词、完整歌词窗口。iPhone：完整歌词、灵动岛、锁屏实时活动。iPad：完整歌词、锁屏实时活动；iPad 没有灵动岛硬件。
 
-这是独立伴侣 App，通过公开接口接入 Spotify。工程不修改 Spotify 安装目录，不注入其进程，也不依赖现成歌词插件。
+这是独立伴侣 App，通过本地自动化或官方播放 API 读取 Spotify 播放状态，并提供可选的 Spotify 网页歌词会话。工程不修改 Spotify 安装目录，不注入其进程，也不依赖现成歌词插件。
 
 ## 立即运行 Mac 版
 
 GitHub 仓库：[hhhoratioxu/VerseDock](https://github.com/hhhoratioxu/VerseDock)。打包的 Mac App 在 [Releases](https://github.com/hhhoratioxu/VerseDock/releases) 中提供；源码、Xcode 工程和安装说明直接保存在仓库内。
 
-当前版本为 [v0.1.2-lyrics](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.2-lyrics)：可选歌词提供商、自动换源、可拖动悬浮窗、可调宽度状态栏与可选双语翻译。原创 V 图标与素材说明仍在 [Artwork](Artwork/README.md)。
+当前版本为 [v0.1.3-spotify](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.3-spotify)：正常 Dock 入口、独立 Spotify 登录窗口、点击同步歌词跳转，以及实验性 Spotify 原词优先。保留可选备用提供商、可拖动悬浮窗、可调宽度状态栏与可选双语翻译。原创 V 图标与素材说明仍在 [Artwork](Artwork/README.md)。
 
-下载 `VerseDock-macOS-arm64.zip` 并解压，双击 `VerseDock.app`。本地自行构建的产物位于 `build/VerseDock.app`，也可以在项目目录执行：
+下载 `VerseDock-macOS-arm64.zip` 并解压，将 `VerseDock.app` 放进“应用程序”后双击。运行时显示 Dock 图标，点击 Dock 可重新打开歌词主窗口；关闭主窗口后状态栏歌词仍然继续。本地自行构建的产物位于 `build/VerseDock.app`，也可以在项目目录执行：
 
 ```sh
 open build/VerseDock.app
@@ -30,21 +30,24 @@ Mac 本地读取无需 Spotify Client ID。当前包为 arm64、最低 macOS 14�
 | 同步 LRC、完整歌词、自动跟随 | 有 | 有 |
 | 同时间戳双语行、重复时间戳 | 有 | 有 |
 | 每首歌校准 ±10 秒 | 有 | 有 |
+| 点击同步歌词跳到演唱时间 | 已实际控制 Spotify 并读回确认 | 已接入官方 seek API，待配置授权与真机验收 |
 | 本地文件导入、缓存清除 | 有 | 有 |
-| 在线歌词 | 默认自动：LRCLIB → QQ 音乐 → 网易云音乐 → lyrics.ovh；可指定来源 | 同左 |
+| 在线歌词 | 可选 Spotify 网页会话优先；备用默认 LRCLIB → QQ → 网易云 → lyrics.ovh | 相同代码路径，网页会话待真机验证 |
 | 状态栏当前歌词 | 默认静态，可加宽或开启长句循环滚动 | 不适用 |
 | 可选歌词翻译 | 原词上、译文下；macOS 15+ | iOS/iPadOS 18+，实时活动也包含可选译文 |
 | 可拖动、跨桌面的悬浮窗 | 歌词/空白处均可拖动，位置保存 | 不适用 |
 | 灵动岛 / 锁屏实时活动 | 向推送桥发送数据 | ActivityKit + WidgetKit |
 | 后台更新桥 | Mac 作为来源 | 注册 APNs 实时活动令牌 |
 
-歌词跟随 Spotify 当前歌曲，独立向外部服务查找，不需要 Spotify Cookie。LRCLIB 搜索无结果、超时、返回错误或只有纯文本时，继续尝试 QQ 音乐、网易云，再以 lyrics.ovh 的纯文本作为补充。手动指定来源后只访问该提供商，默认仍为自动方案。重试按钮跳过缓存；设置中可查看每个已尝试来源的结果。服务限流会遵守 Retry-After，不在切歌时立即重打同一来源。
+歌词跟随 Spotify 当前歌曲。备用来源不需要 Spotify 账号或 Cookie。LRCLIB 搜索无结果、超时、返回错误或只有纯文本时，继续尝试 QQ 音乐、网易云，再以 lyrics.ovh 的纯文本作为补充。手动指定备用后只访问该备用提供商；开启原词优先时仍先查 Spotify。重试按钮跳过缓存；设置中可查看每个已尝试来源的结果。服务限流会遵守 Retry-After，不在切歌时立即重打同一来源。
 
 匹配统一繁简体、标点和多歌手分隔符，移除曲名末尾的电影/剧集说明；歌手中英文名由 QQ 音乐歌手资料或网易云返回的别名核对。优先相同专辑和接近时长，保留 Live、Remix、伴奏等版本区别，不匹配其他歌手或明显不同长度的版本。允许的小幅时长差超过 3 秒时会显示并提供校准，自动匹配容差最多 8 秒。第三方服务仍可能缺歌或不可用；纯文本不会生成虚假时间轴。详见 [歌词来源](docs/LYRICS.zh-CN.md)。
 
 ## 歌词原词与翻译
 
-Spotify 官方目前没有向第三方开放歌词读取 API，VerseDock 无法据此判断“Spotify 有歌词就优先使用”。当前实际读取的是上面列出的备用来源，窗口明确显示真实提供商；没有把外部歌词标成 Spotify 原词。YouTube Music 与 Apple Music 的歌词尚未接通，不提供虚假的可用选项。详见 [歌词能力与来源说明](docs/LYRICS.zh-CN.md)。
+「优先使用 Spotify 原词」默认开启。在设置里打开独立登录窗口，自行登录 Spotify 官方网页；登录框使用正常可输入的独立 Mac 窗口。这个可选接入使用 Spotify 网页播放器的非公开歌词接口，可能受地区、账户、会话或接口变化影响。网页会话有效且读取成功时，Spotify 的同步或纯文本原词均优先；无词才进入备用。授权或网络错误会明确显示，并暂时使用备用，不会把失败说成“Spotify 无歌词”。本机已验证登录窗口输入；真实账户的原词返回仍需完成登录后的检查，不能把解析测试当作接通证明。YouTube Music 与 Apple Music 的歌词尚未接通。详见 [歌词能力与来源说明](docs/LYRICS.zh-CN.md)。
+
+点击主窗口中有时间戳的歌词行，即可跳到对应演唱位置，已考虑该首歌的校准偏移。Mac 使用本地 Spotify 自动化；iOS 使用官方播放控制权限，需要重新授权旧连接，且 Spotify 对该 API 要求 Premium。纯文本歌词没有可靠时间点，不提供虚假跳转。
 
 歌词翻译默认关闭，在「设置 → 歌词翻译」自行开启并选择目标语言。原词在上，机器译文在下；主窗口、可拖动悬浮窗、Mac 状态栏与实时活动均提供对应布局。状态栏高度有限，译文字号较小；收起的灵动岛只显示原词片段，展开或锁屏显示双语。翻译不改变原歌词的时间戳。
 
@@ -54,7 +57,7 @@ Spotify 官方目前没有向第三方开放歌词读取 API，VerseDock 无法�
 
 ## iPhone/iPad 构建与灵动岛
 
-已经提供 [iPhone/iPad 待签名 IPA](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.2-lyrics)。下载 `VerseDock-iOS-unsigned.ipa`，使用自己的 Apple 签名身份重新签名安装。包内保留灵动岛/锁屏扩展，最低 iOS/iPadOS 17；本次已完成标准 Xcode 设备构建，但尚未签名或真机验收。详细说明见 [docs/IPA.zh-CN.md](docs/IPA.zh-CN.md)。
+已经提供 [iPhone/iPad 待签名 IPA](https://github.com/hhhoratioxu/VerseDock/releases/tag/v0.1.3-spotify)。下载 `VerseDock-iOS-unsigned.ipa`，使用自己的 Apple 签名身份重新签名安装。包内保留灵动岛/锁屏扩展，最低 iOS/iPadOS 17；本次已完成标准 Xcode 设备构建，但尚未签名或真机验收。详细说明见 [docs/IPA.zh-CN.md](docs/IPA.zh-CN.md)。
 
 打开 `VerseDock.xcodeproj`，选择 `VerseDock` scheme。选择你的 Apple 开发者 Team 和设备。部署目标 iOS/iPadOS 17；灵动岛要求具备相应硬件的 iPhone。开启 App 中的实时活动按钮后，系统管理灵动岛和锁屏显示。
 
@@ -72,9 +75,9 @@ Mac Spotify → VerseDock Mac → 你的 HTTPS 推送桥 → Apple APNs → iPho
 
 本项目的歌词解析、同步算法、两端 UI、Spotify 接入、PKCE 流程、推送桥、回调页、工程生成脚本与测试均为本次从零编写。未复制、改名包装或下载任何开源 Spotify 歌词插件、Spicetify 扩展或相似项目源码。接口行为依据 Spotify、Apple 与 LRCLIB 的文档/公开服务协议实现。
 
-Apple App 没有第三方包依赖，使用 SwiftUI、AppKit、Foundation、CryptoKit、Security、AuthenticationServices、ActivityKit、WidgetKit、Translation 与 NaturalLanguage。可选推送服务使用通用 `httpx`（HTTP/2）和 `cryptography`（ES256）依赖；这些是网络/密码库，不是歌词插件。它们保留各自的许可证，未声称这些库由本项目原创。Spotify 与歌词内容的权利也不属于本项目。
+Apple App 没有第三方包依赖，使用 SwiftUI、AppKit、Foundation、CryptoKit、Security、AuthenticationServices、WebKit、ActivityKit、WidgetKit、Translation 与 NaturalLanguage。可选推送服务使用通用 `httpx`（HTTP/2）和 `cryptography`（ES256）依赖；这些是网络/密码库，不是歌词插件。它们保留各自的许可证，未声称这些库由本项目原创。Spotify 与歌词内容的权利也不属于本项目。
 
-本地数据：歌词缓存在 Application Support；Spotify 令牌与配对密钥存 Keychain；APNs 私钥只保留在你配置的服务端。不使用 Spotify Cookie、内部歌词接口、Spotify 密码或 Client Secret。只有开启在线歌词或推送桥后才向对应服务发送所需数据。
+本地数据：歌词缓存在 Application Support；iOS 官方 OAuth 令牌与配对密钥存 Keychain；可选的网页登录状态由本机隔离的 WebKit 存储管理。网页歌词授权只留在 Spotify 网页执行环境，不经原生桥导出，不传给备用来源，也不上传仓库。不读取其他浏览器的 Cookie，不要求复制 Cookie、密码或 Client Secret。APNs 私钥只保留在你配置的服务端。开启对应联网功能后才向相关服务发送所需数据。
 
 ## 构建、检查与测试
 
@@ -90,6 +93,9 @@ zsh scripts/build-ios-unsigned.sh
 
 # 运行原创核心的 XCTest 测试
 zsh scripts/test-core.sh
+
+# 原创网页歌词桥的离线测试；使用 Node.js，不访问真实账号
+node Tests/WebBridge/run-tests.mjs
 
 # 重新生成确定性的 Xcode 工程
 python3 scripts/generate-project.py

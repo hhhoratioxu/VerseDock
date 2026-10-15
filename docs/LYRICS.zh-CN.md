@@ -1,6 +1,6 @@
 # 在线歌词与匹配
 
-VerseDock 从 Spotify 读取歌曲和进度，再独立获取外部歌词。不读取 Spotify 客户端内部歌词、Cookie、密码或私有令牌。
+VerseDock 从 Spotify 读取歌曲和进度。开启原词优先并在隔离网页中登录后，先尝试 Spotify 网页原词，再按设置使用外部备用。不会读取 Spotify 桌面客户端的数据库或其他浏览器的登录资料。
 
 ## 来源与切换
 
@@ -9,11 +9,11 @@ VerseDock 从 Spotify 读取歌曲和进度，再独立获取外部歌词。不�
 3. 网易云音乐：原创适配匿名网页搜索与时间轴歌词接口；按歌曲名称、歌手及服务返回的别名、版本和时长核对。它不是稳定承诺的公开开发者歌词 API，接口变化、地区或版权限制会影响可用性；不采用“原唱”标题替代对真实歌手的核对，不获取账号 Cookie。
 4. lyrics.ovh：按歌手/歌名获取纯文本。仅做全文显示，不虚构同步时间戳。
 
-默认保留「自动」；用户可以手动指定 LRCLIB、QQ 音乐、网易云或 lyrics.ovh，手动模式只访问所选服务。偏好自动保存，切换后跳过旧来源缓存重查当前歌曲；本地导入文件不会被其他提供商伪装。
+备用默认保留「自动」；用户可以手动指定 LRCLIB、QQ 音乐、网易云或 lyrics.ovh，手动模式只访问所选备用。开启原词优先时，Spotify 仍先于手动备用。偏好自动保存，切换后跳过旧来源缓存重查当前歌曲；明确导入的本地文件仍优先，便于用户自行校正。
 
 一个来源无结果、超时、HTTP 错误或返回无效内容时继续下一个。纯文本会暂存，继续寻找同步版本；全部来源无同步版本时仍可显示已取得的纯文本。已尝试来源的结果在设置中展示，实际来源与来源链接显示在窗口底部。
 
-请求使用 VerseDock 自身的 User-Agent，不传送 Spotify 授权，不下载音频，不依赖其他歌词插件源码。只向所尝试的歌词服务发送当前歌曲元数据。网络开关可随时关闭；已有本地导入文件优先，纯文本网络缓存可重新寻找同步版本。窗口顶部的重试按钮跳过缓存。服务和网络状态影响覆盖率，不能保证每首歌都有歌词。
+备用请求使用 VerseDock 自身的 User-Agent，不传送 Spotify 授权，不下载音频，不依赖其他歌词插件源码。只向所尝试的歌词服务发送当前歌曲元数据。网络开关可随时关闭；已有本地导入文件优先，纯文本网络缓存可重新寻找同步版本。开启原词优先时，外部缓存不会跳过 Spotify 检查。窗口顶部的重试按钮跳过缓存。服务和网络状态影响覆盖率，不能保证每首歌都有歌词。
 
 ## 防止错配
 
@@ -29,11 +29,25 @@ VerseDock 从 Spotify 读取歌曲和进度，再独立获取外部歌词。不�
 
 ## Spotify 原词、YouTube Music 与 Apple Music
 
-用户期望的顺序是“先 Spotify 原词，无词后再选择备用来源”。当前未实现这个首选判断：Spotify 官方答复没有公开的歌词 API，当前 Web API 的歌曲响应也没有歌词正文或可靠的歌词可用性字段。Spotify 客户端有歌词不表示 VerseDock 的播放授权能读取它。当前只实现已核验的备用来源，不伪造 Spotify 成功、无歌词或自动判断记录，也不要求提供 Spotify Cookie/密码。
+0.1.3 增加可选的 Spotify 网页会话接入。Spotify 公开 Web API 仍不提供歌词；这里使用网页播放器的非公开 `color-lyrics` 接口，属于实验性功能。用户在「设置 → 连接 / 查看 Spotify 原词会话」中自行登录官方网页，Mac 使用独立标准窗口以保证键盘输入和焦点；也可点击「前往 Spotify 登录」直接进入账号页。本机已实际键入测试文字并清除，未提交测试账号。实际账户的原词读取仍待完成登录后验证。
+
+原词优先默认开启：Spotify 返回有效的同步歌词或纯文本即采用，不再调用备用；404 或明确无可用正文才记录为 Spotify 无词。401/403 记录为授权不可用，网络错误、响应错误与 429 分别说明，并暂时走备用。关闭原词优先后只使用用户指定的备用方案。解析器不会给纯文本制造时间轴。
+
+登录状态保存在本机独立的 WebKit 数据存储中，和 Safari、Chrome 及 Spotify 桌面 App 分离。原创建桥仅在 `https://open.spotify.com` 的主页面运行，利用该网页自身的第一方会话请求读取歌词。授权值留在页面闭包中；原生桥只接收就绪状态和经筛选的歌词数据。不会把 Cookie、密码、授权头或账号资料导出到 App 日志、备用歌词服务或 GitHub。清除登录会话只清除此隔离存储。
+
+接口没有稳定性承诺，账户、地区、登录方式或网页更新可能导致不可用。网页会话的解析和降级策略已用原创数据测试；这些测试不等于真实 Spotify 歌词成功。iOS 的相同 WebKit 路径已编译，未做真机登录验收。
 
 YouTube Data API 的字幕下载需要对视频有编辑权限的授权，不能作为任意歌曲的通用歌词服务。Apple Music 的公开 `hasLyrics` 是可用性布尔值，没有在本版本取得歌词正文。它们尚未接通，不列入可选的可用提供商。
 
 依据：[Spotify 官方答复](https://community.spotify.com/forum/en/discussion/5355493/update-endpoint-for-lyrics)、[Spotify 当前播放响应](https://developer.spotify.com/documentation/web-api/reference/get-the-users-currently-playing-track)、[YouTube 官方字幕下载](https://developers.google.com/youtube/v3/docs/captions/download)、[Apple Music hasLyrics](https://developer.apple.com/documentation/musickit/song/haslyrics)。
+
+## 点击歌词跳转
+
+有时间轴的歌词行可以点击，原词或其下译文均属于同一按钮。跳转时间为该行时间减去用户保存的校准量，限制在 0 至歌曲结束前 0.05 秒，避免把末行误当作下一首。执行前校验仍是同一首歌，切歌或任务取消后丢弃旧结果。
+
+Mac 通过固定 AppleScript 子程序和结构化参数设置真实 Spotify 的播放位置，随后读回歌曲与进度，只有实际位置接近目标才显示“已跳转”。本机实际点击《愛你但說不出口》的 0:38 行后，读回 Spotify 0:39，确认生效。不会把本地界面进度变化单独当作成功。
+
+iOS 使用官方 `PUT /v1/me/player/seek`，先检查当前曲目身份；OAuth 新增 `user-modify-playback-state`，旧授权需要重新连接。Spotify 对此接口要求 Premium，失败会提示。此路径尚无真机账户控制验收。纯文本歌词没有准确时间戳，不能点击跳转。依据：[Spotify Seek to Position](https://developer.spotify.com/documentation/web-api/reference/seek-to-position-in-currently-playing-track)。
 
 ## 可选机器翻译
 

@@ -5,10 +5,16 @@ import VerseCore
 
 @MainActor final class VerseAppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
+        NSApp.setActivationPolicy(.regular)
         StatusBarController.shared.start(model: .shared)
         VerseModel.shared.start()
+        DispatchQueue.main.async { NSApp.activate(ignoringOtherApps: true) }
     }
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        StatusBarController.shared.showMainWindow()
+        return true
+    }
 }
 
 /// The lyric is the title of an actual macOS status button, visible before opening its menu.
@@ -121,7 +127,7 @@ import VerseCore
         guard let raw = sender.representedObject as? String, let choice = LyricsProviderChoice(rawValue: raw) else { return }
         model?.lyricsProviderChoice = choice
     }
-    @objc private func showMainWindow() {
+    @objc func showMainWindow() {
         guard let model else { return }
         if let window = NSApp.windows.first(where: { $0.title == "VerseDock" }) {
             window.makeKeyAndOrderFront(nil)

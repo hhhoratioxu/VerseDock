@@ -100,6 +100,10 @@ struct ContentView: View {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 24) {
                         ForEach(document.lines) { line in
+                            Button {
+                                follow = true
+                                Task { await model.seek(to: line) }
+                            } label: {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(line.text.isEmpty ? "♪" : line.text)
                                 .font(.system(size: model.activeIndex == line.id ? 30 : 26, weight: .bold, design: .rounded))
@@ -115,6 +119,12 @@ struct ContentView: View {
                                 .padding(.vertical, 5)
                                 .id(line.id)
                                 .accessibilityAddTraits(model.activeIndex == line.id ? .isSelected : [])
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(model.seeking)
+                            .help("跳转到 " + time(max(0, line.time - model.adjustment)))
+                            .accessibilityLabel("跳转到 " + time(max(0, line.time - model.adjustment)) + "：" + line.text)
+                            .accessibilityIdentifier("lyric-seek-\(line.id)")
                         }
                     }.padding(.horizontal, 28).padding(.vertical, 80)
                 }
@@ -161,6 +171,14 @@ struct ContentView: View {
     }
     private var footer: some View {
         VStack(spacing: 15) {
+            if model.lyrics?.lines.isEmpty == false {
+                HStack {
+                    Text(model.seekStatus.isEmpty ? "点击一句歌词，跳转到对应时间" : model.seekStatus)
+                        .font(.caption2).foregroundStyle(.secondary)
+                    Spacer()
+                    if model.seeking { ProgressView().controlSize(.small) }
+                }
+            }
             if let snapshot = model.snapshot {
                 ProgressView(value: model.progress, total: max(1, snapshot.track.duration)).tint(VerseTheme.accent)
                 HStack {
@@ -205,21 +223,33 @@ struct ContentView: View {
 
 struct SettingsView: View {
     @ObservedObject var model: VerseModel
+    @ObservedObject private var spotifyLyrics = SpotifyLyricsSession.shared
+    @State private var connectingLyrics = false
     @Environment(\.dismiss) private var dismiss
     var body: some View {
         NavigationStack {
             Form {
                 Section("歌词来源") {
                     Toggle("自动查找在线歌词与备用来源", isOn: $model.onlineLyrics)
+                    Toggle("优先使用 Spotify 原词", isOn: $model.preferSpotifyLyrics).disabled(!model.onlineLyrics)
+                    Button("连接 / 查看 Spotify 原词会话") {
+                        #if os(macOS)
+                        dismiss()
+                        DispatchQueue.main.async { SpotifyLyricsWindowController.shared.show() }
+                        #else
+                        connectingLyrics = true
+                        #endif
+                    }
+                    Text(spotifyLyrics.status).font(.caption).foregroundStyle(.secondary)
                     Picker("备用歌词来源", selection: $model.lyricsProviderChoice) {
                         ForEach(LyricsProviderChoice.allCases, id: \.rawValue) { choice in
                             Text(choice.name).tag(choice)
                         }
                     }
                     .disabled(!model.onlineLyrics)
-                    Text("默认自动换源；手动指定后仅访问该提供商。选择会自动保存，切换时重新查找当前歌曲。")
+                    Text("先查 Spotify 原词，有原词即使用；无词或暂时读不到时再访问所选备用来源。备用默认自动换源，手动指定后只访问该备用提供商。选择自动保存。")
                         .font(.caption).foregroundStyle(.secondary)
-                    Text("Spotify 原词：目前官方接口未开放歌词读取，无法判断其是否有词。当前自动方案依次尝试 LRCLIB、QQ 音乐、网易云和 lyrics.ovh，界面会标明实际来源。")
+                    Text("Spotify 原词通过独立的 Spotify 网页登录会话读取，需要在上方入口自行登录。网页接口不是公开开发者 API，可能失效；授权失败会明确显示，不会误报为歌曲无词。备用自动顺序为 LRCLIB、QQ 音乐、网易云、lyrics.ovh。")
                         .font(.caption).foregroundStyle(.secondary)
                     Text("YouTube Music、Apple Music 暂无已接通的歌词读取方式。备用来源仅接收歌曲信息，不接收 Spotify 授权；歌词缓存在本机，也可导入自己的 UTF-8 LRC。")
                         .font(.caption).foregroundStyle(.secondary)
@@ -259,7 +289,7 @@ struct SettingsView: View {
                 Section("Spotify 连接") {
                     TextField("Spotify Client ID", text: $model.clientID).autocorrectionDisabled().textInputAutocapitalization(.never)
                     TextField("HTTPS 回调地址", text: $model.redirectURI).autocorrectionDisabled().textInputAutocapitalization(.never).keyboardType(.URL)
-                    Text("将工程里的 web 回调页部署到你自己的 HTTPS 地址，并在 Spotify Dashboard 登记完全相同的地址。不需要 Client Secret。开发模式需要应用所有者 Premium，并将使用者加入白名单。")
+                    Text("将工程里的 web 回调页部署到你自己的 HTTPS 地址，并在 Spotify Dashboard 登记完全相同的地址。授权包含读取当前歌曲和控制播放进度；旧授权需要重新连接才能点击歌词跳转，进度控制需要 Premium。不需要 Client Secret。")
                         .font(.caption).foregroundStyle(.secondary)
                     Button("连接 Spotify") { Task { await model.connect() } }
                     Button("断开并删除本机授权", role: .destructive) { model.disconnect() }
@@ -279,7 +309,7 @@ struct SettingsView: View {
                     Text(model.relayStatus).font(.caption).foregroundStyle(.secondary)
                 }
                 Section("关于") {
-                    Text("VerseDock 0.1.2 · 原创原生实现")
+                    Text("VerseDock 0.1.3 · 原创原生实现")
                     Text("独立 Spotify 歌词伴侣。应用代码从零编写，无第三方歌词插件或 Spotify 客户端补丁。歌词内容归其权利人所有。")
                         .font(.caption).foregroundStyle(.secondary)
                 }
@@ -289,6 +319,7 @@ struct SettingsView: View {
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("保存") { model.saveSettings(); dismiss() } } }
         }
         .preferredColorScheme(.dark).tint(VerseTheme.accent)
+        .sheet(isPresented: $connectingLyrics) { SpotifyLyricsConnectionView() }
         #if os(macOS)
         .frame(width: 520, height: 640)
         #endif

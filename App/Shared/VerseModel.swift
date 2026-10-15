@@ -16,6 +16,40 @@ import AppKit
     @Published var notice = ""
     @Published var isDemo = false
     @Published var loadingLyrics = false
+    @Published private(set) var seeking = false
+    @Published private(set) var seekStatus = ""
+    func seek(to line: LyricLine) async {
+        guard !seeking, let track = snapshot?.track, let document = lyrics else { return }
+        do {
+            let position = try PlaybackSeeking.position(for: line, document: document, duration: track.duration, adjustment: adjustment)
+            if isDemo { demoSeek(position); seekStatus = "演示跳转"; return }
+            seeking = true; seekStatus = "正在跳转…"; generation += 1
+            defer { seeking = false; nextPoll = .distantPast }
+            let confirmed: PlaybackSnapshot?
+            #if os(macOS)
+            confirmed = try await reader.seek(to: position, track: track)
+            #else
+            guard var credential = tokens else { throw VerseError.message("请先连接 Spotify") }
+            if credential.expiresAt <= Date().addingTimeInterval(30) {
+                credential = try await spotify.refresh(credential, clientID: clientID)
+                try persist(credential)
+            }
+            try await spotify.seek(to: position, track: track, accessToken: credential.accessToken)
+            confirmed = try await spotify.currentlyPlaying(accessToken: credential.accessToken)
+            #endif
+            guard snapshot?.track.id == track.id else { seekStatus = "歌曲已变化"; return }
+            if let confirmed, confirmed.track.id == track.id {
+                apply(confirmed)
+                seekStatus = abs(confirmed.position - position) < 2.5 ?
+                    String(format: "已跳转至 %d:%02d", Int(position) / 60, Int(position) % 60) : "指令已发送，等待 Spotify 确认进度"
+            } else { seekStatus = "指令已发送，等待 Spotify 更新" }
+        } catch {
+            #if os(iOS)
+            if case VerseError.http(403) = error { seekStatus = "请重新连接 Spotify 并允许控制播放进度；此接口需要 Premium"; return }
+            #endif
+            seekStatus = error.localizedDescription
+        }
+    }
     @Published var translationEnabled = UserDefaults.standard.bool(forKey: "translationEnabled") {
         didSet { UserDefaults.standard.set(translationEnabled, forKey: "translationEnabled"); translationPreferenceChanged() }
     }
@@ -52,8 +86,16 @@ import AppKit
     @Published var onlineLyrics = UserDefaults.standard.object(forKey: "onlineLyrics") as? Bool ?? true {
         didSet {
             UserDefaults.standard.set(onlineLyrics, forKey: "onlineLyrics")
+            if onlineLyrics, preferSpotifyLyrics { SpotifyLyricsSession.shared.restoreIfNeeded() }
             lookupTask?.cancel()
             if let track = snapshot?.track { loadLyrics(track) }
+        }
+    }
+    @Published var preferSpotifyLyrics = UserDefaults.standard.object(forKey: "preferSpotifyLyrics") as? Bool ?? true {
+        didSet {
+            UserDefaults.standard.set(preferSpotifyLyrics, forKey: "preferSpotifyLyrics")
+            if preferSpotifyLyrics, onlineLyrics { SpotifyLyricsSession.shared.restoreIfNeeded() }
+            if let track = snapshot?.track { loadLyrics(track, useCache: false) }
         }
     }
     @Published var lyricsProviderChoice = LyricsProviderChoice(rawValue: UserDefaults.standard.string(forKey: "lyricsProviderChoice") ?? "") ?? .automatic {
@@ -119,6 +161,11 @@ import AppKit
     }
     func start() {
         guard timer == nil else { return }
+        SpotifyLyricsSession.shared.onReady = { [weak self] in
+            guard let self, self.onlineLyrics, self.preferSpotifyLyrics else { return }
+            self.retryLyrics()
+        }
+        if onlineLyrics, preferSpotifyLyrics { SpotifyLyricsSession.shared.restoreIfNeeded() }
         #if os(macOS)
         if overlayVisible { OverlayController.shared.setVisible(true, model: self) }
         #endif
@@ -218,6 +265,7 @@ import AppKit
         let changed = value?.track.id != snapshot?.track.id
         snapshot = value
         if changed {
+            seekStatus = ""
             lookupTask?.cancel(); lyrics = nil; activeIndex = nil; loadingLyrics = false
             if let track = value?.track {
                 adjustment = UserDefaults.standard.double(forKey: "offset.\(track.id)")
@@ -231,10 +279,10 @@ import AppKit
         lyrics = nil; activeIndex = nil; loadingLyrics = true; lyricsAttempts = []; lyricsStatus = "正在查找歌词"
         lookupTask = Task {
             if useCache, let cached = await store.load(track.id), !Task.isCancelled, snapshot?.track.id == track.id,
-               cached.source == "本地 LRC" || lyricsProviderChoice.providers.map(\.name).contains(cached.source) {
+               cached.source == "本地 LRC" || lyricsProviderChoice.providers.map(\.name).contains(cached.source) || (preferSpotifyLyrics && cached.source == "Spotify") {
                 lyrics = cached; lyricsStatus = describe(cached, cached: true); tick()
                 // Imported files remain authoritative; plain online caches may be upgraded to synchronized lyrics.
-                if !onlineLyrics || cached.source == "本地 LRC" || !cached.lines.isEmpty || cached.instrumental {
+                if !onlineLyrics || cached.source == "本地 LRC" || (!preferSpotifyLyrics && (!cached.lines.isEmpty || cached.instrumental)) {
                     loadingLyrics = false; return
                 }
             }
@@ -243,7 +291,11 @@ import AppKit
                 loadingLyrics = false; lyricsStatus = "请导入这首歌的 LRC，或在设置中开启在线歌词"; return
             }
             do {
-                let result = try await lyricsClient.lookup(for: track, providers: lyricsProviderChoice.providers) { [self] message in
+                let primary: (@Sendable (Track) async throws -> LyricDocument?)?
+                if preferSpotifyLyrics {
+                    primary = { @Sendable track in try await SpotifyLyricsSession.shared.lyrics(for: track) }
+                } else { primary = nil }
+                let result = try await lyricsClient.lookup(for: track, providers: lyricsProviderChoice.providers, spotify: primary) { [self] message in
                     await self.lookupProgress(message, trackID: track.id)
                 }
                 guard !Task.isCancelled, snapshot?.track.id == track.id else { return }

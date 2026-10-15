@@ -6,11 +6,11 @@
 <key>CFBundleIdentifier</key><string>com.horatio.versedock.mac</string>
 <key>CFBundleExecutable</key><string>VerseDockMac</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleVersion</key><string>3</string>
-<key>CFBundleShortVersionString</key><string>0.1.2</string>
+<key>CFBundleVersion</key><string>4</string>
+<key>CFBundleShortVersionString</key><string>0.1.3</string>
 <key>CFBundleIconFile</key><string>AppIcon</string>
 <key>LSMinimumSystemVersion</key><string>14.0</string>
-<key>LSUIElement</key><true/>
+<key>LSUIElement</key><false/>
 <key>NSHighResolutionCapable</key><true/>
-<key>NSAppleEventsUsageDescription</key><string>读取 Spotify 当前歌曲和播放进度，用于同步菜单栏和悬浮歌词。</string>
+<key>NSAppleEventsUsageDescription</key><string>读取 Spotify 当前歌曲和播放进度，并在点击歌词时跳转到对应时间。</string>
 </dict></plist>

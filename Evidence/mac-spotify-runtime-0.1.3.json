@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-15",
+  "appVersion": "0.1.3 (4)",
+  "macApp": {
+    "regularActivationConfigured": true,
+    "LSUIElement": false,
+    "installedInUserApplications": true,
+    "installedCopyStrictSignature": "passed",
+    "dockClickReopenManuallyVerified": false
+  },
+  "loginInput": {
+    "window": "separate standard window",
+    "officialHost": "accounts.spotify.com",
+    "testTextTypedAndObserved": true,
+    "testTextCleared": true,
+    "testTextSubmitted": false,
+    "realCredentialsHandledByAgent": false
+  },
+  "realMacSeek": {
+    "track": "愛你但說不出口",
+    "artist": "Karencici",
+    "trackID": "5CCV2xxYnI7b1wFkP1gElh",
+    "lyricTimestampSeconds": 38,
+    "spotifyReadbackSeconds": 39,
+    "durationSeconds": 173,
+    "uiConfirmed": true,
+    "confirmationBasedOnActualSpotifySnapshot": true
+  },
+  "spotifyOriginalLyrics": {
+    "implemented": true,
+    "interface": "experimental non-public Web Player endpoint",
+    "realAuthenticatedLyricsVerified": false,
+    "currentBlocker": "Awaiting user completion of official Spotify web login"
+  },
+  "tests": {
+    "coreXCTest": {
+      "executed": 42,
+      "failures": 0
+    },
+    "webBridgeOffline": {
+      "cases": 6,
+      "passed": true
+    }
+  },
+  "builds": {
+    "macOSarm64": "passed",
+    "iOSDeviceMainAndWidget": "passed, unsigned"
+  },
+  "iOSPhysicalDeviceTested": false,
+  "APNsDeliveryTested": false,
+  "privacy": "No lyric bodies, passwords, cookies, authorization headers, account profiles or signing materials included"
+}
